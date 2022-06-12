@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id  'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+allprojects{
+//    apply plugin: 'idea'
+//    apply plugin: 'java'
+//    apply plugin: 'org.springframework.boot'
+//    apply plugin: 'io.spring.dependency-management'
+
+    repositories {
+        mavenLocal()
+        maven {
+            url 'https://maven.aliyun.com/nexus/content/groups/public/'
+        }
+        mavenCentral()
+    }
+    dependencyManagement{
+        dependencies {
+            dependency group: 'org.neo4j.driver', name: 'neo4j-java-driver', version: '4.4.6'
+        }
+    }
+}
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.neo4j.driver:neo4j-java-driver'
+}

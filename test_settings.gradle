@@ -1,0 +1,60 @@
+rootProject.name = 'JAVA_DEMO'
+
+//初始化阶段
+gradle.beforeSettings {
+    println "beforeSettings..."
+}
+
+gradle.settingsEvaluated {
+    println "settingsEvaluated..."
+}
+
+gradle.projectsLoaded {
+    println "projectsLoaded..."
+}
+
+gradle.beforeProject {
+    println "beforeProject..."
+}
+
+gradle.afterProject {
+    println "afterProject..."
+}
+
+gradle.projectsEvaluated {
+    //所有project执行完执行 只会执行一次
+    println "projectsEvaluated..."
+}
+
+//task依赖关系图建立完成
+gradle.taskGraph.whenReady {
+    println "whenReady..."
+}
+
+gradle.buildFinished {
+    println "buildFinished..."
+}
+
+
+//自定义监听器
+//gradle.addBuildListener(new BuildListener() {
+//    @Override
+//    void settingsEvaluated(Settings settings) {
+//
+//    }
+//
+//    @Override
+//    void projectsLoaded(Gradle gradle) {
+//
+//    }
+//
+//    @Override
+//    void projectsEvaluated(Gradle gradle) {
+//
+//    }
+//
+//    @Override
+//    void buildFinished(BuildResult buildResult) {
+//
+//    }
+//})

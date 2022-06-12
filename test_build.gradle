@@ -1,0 +1,309 @@
+import java.time.Duration
+
+//插件 是一系列task的集合
+
+//二进制插件 使用方式 apply+buildscript
+//老式写法 非核心插件需要在 buildscript dependencies指定依赖
+//核心插件
+//apply plugin: 'java'
+//apply plugin: 'idea'
+//apply plugin: 'war'
+//非核心插件 也是官方支持的插件 需要
+//apply plugin: 'com.jfrog.bintray'
+//apply plugin: 'org.akhikhl.gretty'
+
+//buildscript 配置gradle脚本自身所需的构建信息和依赖
+buildscript {
+    repositories {
+        mavenLocal()
+        maven {
+            url 'https://maven.aliyun.com/nexus/content/groups/public/'
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.bmuschko:gradle-docker-plugin:3.3.4"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.6.5"
+    }
+}
+
+//插件新写法 plugins DSL写法
+// 非核心插件可以直接指定依赖
+//如果要使用第三方插件需要使用老式写法
+plugins {
+    id 'java'
+    id 'idea'
+    //非核心插件
+    id  'org.springframework.boot' version '2.6.4'  //指定springboot版本
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'//使用此插件dependencies中可以不指定版本
+}
+
+//自定义插件
+//建立插件工程 配置参数 发布和使用(发布一个jar)
+//简单本地插件
+class MyPlugin implements Plugin<Project>{
+
+    @Override
+    void apply(Project project) {
+        project.task("myPlugin"){
+            group("learn")
+            println "execute my plugin"
+        }
+    }
+}
+
+apply plugin: MyPlugin
+
+//对所有project应用配置
+//allprojects{
+//    apply plugin: "idea"
+//    repositories {
+//        mavenLocal()
+//        maven {
+//            url 'https://maven.aliyun.com/nexus/content/groups/public/'
+//        }
+//        mavenCentral()
+//    }
+//    //依赖管理器
+//    dependencyManagement{
+//        imports{
+//            mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12'
+//            mavenBom 'org.springframework.cloud:spring-cloud-alibaba-dependencies:2.2.6.RELEASE'
+//        }
+//    }
+//    //依赖
+//    dependencies {
+//        implementation('org.springframework.boot:spring-boot-starter'){
+//            exclude module:'tomcat-embed-el'
+//        }
+//        implementation('org.springframework.boot:spring-boot-starter-web')
+//        api 'org.sequareup.retrofit2:retrofit:2.4.0'
+//        //仅编译
+//        compileOnly 'org.projectlombok:lombok:1.18.16'
+//        //仅测试编译
+//        testCompileOnly 'org.projectlombok:lombok:1.18.16'
+//        testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+//        //other...
+//    }
+//}
+
+//subproject{} 子模块配置
+
+//原码和资源目录配置
+//源文件及位置定义 相关依赖管理 定义编译输出
+sourceSets{
+//默认原码和资源目录
+    main {
+        java {
+            //srcDirs = [xxx] 覆盖默认配置
+            srcDirs = ['src/main/java']
+            //添加目录到源码集中
+            //srcDir 'cert/**'
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+            //打包时排除目录
+            //exclude 'cert/**'
+        }
+    }
+
+}
+
+//Task
+task taskA{
+    //执行阶段执行
+    doFirst{
+        println "firstA"
+    }
+    group("learn")//配置分组
+    //初始化阶段执行
+    println "taskA"
+    doLast{
+        println "lastA"
+    }
+    description("描述")
+    timeout = Duration.ofMillis(500)//指定task执行超时时间
+}
+//条件执行
+//taskA.onlyIf{1==2}
+
+task("taskB"){
+    group("learn")
+    println "taskB"
+}
+
+tasks.create("taskC"){
+    group("learn")
+    println "taskC"
+    dependsOn(taskA,taskB)//依赖某些task 当前task在它所依赖的项目之后执行
+}
+//相当于java finally
+taskC.finalizedBy taskA
+//懒加载方式注册
+tasks.register("taskD"){
+    group("learn")
+    println "taskD"
+}
+
+//直接执行
+tasks.with(){
+    println "taskE"
+}
+
+tasks.withType(Number){
+    println "taskF"
+}
+
+println "->" +tasks.getByPath("taskA").path
+println "->" + tasks.findByPath("taskA").path
+
+
+class GreetingTask extends DefaultTask{
+    @Input
+    String who="yan";
+
+    @TaskAction
+    def hello(){
+        println "hello $who"
+    }
+}
+
+task myHello(type: GreetingTask){
+    group("learn")
+}
+
+
+
+task myJar(type: Jar){
+    from compileJava.outputs,"src/main/resources"
+    manifest {
+        attributes(
+                "Manifest-Version": 1.0,
+                "Main-Class": 'com.javademo.App'
+        )
+    }
+}
+//artifactory 自定义构建方式
+//包括打成jar包war包以及压缩包等
+artifacts {
+    //跟一个任务
+    archives myJar
+}
+
+
+//配置依赖仓库
+repositories {
+    mavenLocal()
+    maven {
+//        配置用户名密码
+//        credentials{
+//            username = 'username'
+//            password = 'password'
+//        }
+        url 'https://maven.aliyun.com/nexus/content/groups/public/'
+    }
+    mavenCentral()
+
+    //本地仓库
+    repositories {
+        flatDir(dir: './lib' , name: 'lib directory')
+    }
+}
+
+//将本项目需要的相关依赖资源进行分组 定义资源对象
+configurations {
+    xyz
+    yan123
+    someTest.extendsFrom(testImplementation)    //继承
+}
+
+//指定项目依赖 它描述了configurations中的对象的依赖
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    someTest 'junit:junit:4.13'
+    xyz 'junit:junit:4.13'
+
+    //排除依赖
+    implementation('us.codecraft:webmagic-core:0.7.3') {
+        exclude group: 'org.slf4j.slf4j-log4j12', module: '1.7.32'
+    }
+    //排除子项目
+//    implementation project("projectA")
+    //加载本地目录下的jar
+//    implementation fileTree(dir: './lib',includes: ['*.jar'])
+
+//    implementation('com.goole.guava:guava:11.0.2'){
+//        //在版本冲突情况下优先使用该版本
+//        isForce = true
+//        //禁止依赖传递
+//        transitive = false
+//    }
+}
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+task  xx{
+    //获取xyz 路径
+    println "real path" + configurations.xyz.files.first()
+
+    //拷贝一个依赖中的jar包到lib目录
+    copy {
+        from configurations.xyz.files.first()
+        into "lib"
+    }
+}
+
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+
+
+
+
+test {
+    useJUnitPlatform()
+}
+//test project
+println this
+println this.name
+println name
+println project.name
+println project.property("name")
+
+//使用groovy语法
+def pname = "groovy projectName : " + name
+println pname
+
+//使用java语法进行编写
+String jname = "java projectName : " + project.name
+println jname
+
+//扩展属性 额外属性 ext
+ext.prop1 = "ext prop1"
+println ext.prop1
+println prop1
+//可以在project,task,subproject中读写扩展属性
+//子模块中直接使用 prop1或parent.ext.prop1
+
+println "-----print tasks set-----"
+tasks.forEach(task -> println task.name)
+
+//为project 指定默认执行的task
+//defaultTasks("myTask")
+
+
+
+//gradle生命周期
+//初始化: 解析setting.gradle:确定哪些project会参与构建并创建project实例
+//配置阶段: 解析project,获取project(test_build.gradle)下的所有task以及其它配置,解析出一张有向无环图
+//执行阶段: 会根据命令行中指定的task执行相应的任务
+
+project.beforeEvaluate{
+    println "project.beforeEvaluate..."
+}
+project.afterEvaluate{
+    println "project.afterEvaluate..."
+}

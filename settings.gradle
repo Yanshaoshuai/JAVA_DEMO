@@ -1,0 +1,15 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+    }
+    plugins {
+        id 'java'
+        id 'idea'
+        id  'org.springframework.boot' version "2.6.4"
+        id 'io.spring.dependency-management' version "1.0.11.RELEASE"
+    }
+}
+
+
+rootProject.name = 'JAVA_DEMO'
