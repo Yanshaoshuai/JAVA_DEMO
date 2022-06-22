@@ -1,0 +1,15 @@
+#https端口号.
+server:
+  port: 8443
+  ssl:
+    #证书的路径.
+    key-store: classpath:keystore.p12
+    #证书密码，请修改为您自己证书的密码.
+    key-store-password: changeit
+    #秘钥库类型
+    keyStoreType: PKCS12
+    #证书别名
+    keyAlias: tomcat
+    client-auth: need
+    key-store-provider: SUN
+    trust-store-provider: SUN
