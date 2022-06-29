@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ExecScriptUtil {
-    private static Logger LOG = LoggerFactory.getLogger(ExecScriptUtil.class);
+    private final static Logger LOG = LoggerFactory.getLogger(ExecScriptUtil.class);
 
     public static String execWindows(String script) throws IOException {
         ProcessBuilder builder = new ProcessBuilder();
