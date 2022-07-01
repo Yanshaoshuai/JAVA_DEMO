@@ -13,3 +13,8 @@ pluginManagement {
 
 
 rootProject.name = 'JAVA_DEMO'
+include 'common'
+include 'api'
+include 'api'
+include 'api'
+
