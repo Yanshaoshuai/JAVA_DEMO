@@ -1,4 +1,4 @@
-package com.javademo.https;
+package com.javademo.api.https;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
