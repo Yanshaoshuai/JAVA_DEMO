@@ -9,7 +9,6 @@ import java.io.IOException;
 @SpringBootApplication
 public class JobApp {
     public static void main(String[] args) throws IOException {
-        ExecScriptUtil.execWindows("dir");
         SpringApplication.run(JobApp.class,args);
     }
 }
