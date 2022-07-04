@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ExecScriptUtil {
+    private ExecScriptUtil(){}
     private final static Logger LOG = LoggerFactory.getLogger(ExecScriptUtil.class);
 
     public static String execWindows(String script) throws IOException {
