@@ -35,4 +35,19 @@ public class Result<T> {
         return new Result<>(ResultEnum.SUCCESS.getCode(), ResultEnum.SUCCESS.getStatus(), message, data);
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public T getData() {
+        return data;
+    }
 }
