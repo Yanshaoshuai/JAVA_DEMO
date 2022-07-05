@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class LogInterceptor implements HandlerInterceptor {
-    private ThreadLocal<Long> startTimeThreadLocal=new ThreadLocal<>();
+    private final ThreadLocal<Long> startTimeThreadLocal=new ThreadLocal<>();
     private final static Logger LOG = LoggerFactory.getLogger(LogInterceptor.class);
 
 
