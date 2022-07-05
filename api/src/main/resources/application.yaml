@@ -1,6 +1,6 @@
 #https端口号.
 server:
-  port: 8443
+  port: 8080
   ssl:
     #证书的路径.
     key-store: classpath:keystore.p12
@@ -10,6 +10,13 @@ server:
     keyStoreType: PKCS12
     #证书别名
     keyAlias: tomcat
-    client-auth: need
+#    client-auth: need
     key-store-provider: SUN
     trust-store-provider: SUN
+
+#  servlet:
+#    context-path: /java_demo
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER

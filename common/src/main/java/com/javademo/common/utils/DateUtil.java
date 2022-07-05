@@ -13,12 +13,12 @@ public class DateUtil {
     /**
      * UTC时间格式
      */
-    public static DateTimeFormatter UTC_FORMATTER=DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    public static final DateTimeFormatter UTC_FORMATTER=DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     /**
      * 普通时间格式
      */
-    public static DateTimeFormatter COMMON_FORMATTER=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
+    public static final DateTimeFormatter COMMON_FORMATTER=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
     /**
      * 获取所有时区
