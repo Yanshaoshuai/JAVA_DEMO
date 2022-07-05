@@ -18,7 +18,6 @@ public class LogInterceptor implements HandlerInterceptor {
         startTimeThreadLocal.set(startTime);
         LOG.info("-------- LogInterception.preHandle --- ");
         LOG.info("Request URL: {}" , request.getRequestURL());
-        LOG.info("Start Time: {}" , startTime);
         return true;
     }
 
@@ -35,7 +34,6 @@ public class LogInterceptor implements HandlerInterceptor {
         long startTime = startTimeThreadLocal.get();
         long endTime = System.currentTimeMillis();
         LOG.info("Request URL: {}" , request.getRequestURL());
-        LOG.info("End Time: {}" , endTime);
 
         LOG.info("Time Taken: {}" , (endTime - startTime));
     }
