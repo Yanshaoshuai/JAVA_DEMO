@@ -59,7 +59,7 @@ public class AuthFilter implements Filter {
         httpServletResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         httpServletResponse.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        Result<Object> error = Result.error(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        Result<Object> error = Result.error(HttpStatus.UNAUTHORIZED);
         Gson gson = new Gson();
         PrintWriter writer = httpServletResponse.getWriter();
         writer.write(gson.toJson(error));

@@ -12,5 +12,13 @@ public class TestController {
     public String hello(){
         return "hello";
     }
+    @GetMapping("/illegal/exception")
+    public void illegalArgumentException(){
+        throw new IllegalArgumentException("argument illegal");
+    }
+    @GetMapping("/exception")
+    public void exception(){
+        throw new NullPointerException("argument illegal");
+    }
 
 }

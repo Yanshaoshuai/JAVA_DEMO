@@ -1,5 +1,6 @@
 package com.javademo.common.api;
 
+@Deprecated
 public enum ResultEnum {
     SUCCESS(200,"SUCCESS"),
     ERROR(500,"ERROR");
