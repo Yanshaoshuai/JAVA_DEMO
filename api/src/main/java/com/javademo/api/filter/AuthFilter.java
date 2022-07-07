@@ -3,6 +3,8 @@ package com.javademo.api.filter;
 
 import com.google.gson.Gson;
 import com.javademo.common.api.Result;
+import com.javademo.common.pojo.BaseUser;
+import com.javademo.common.utils.UserInfoUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +49,7 @@ public class AuthFilter implements Filter {
             String token = StringUtils.removeStart(authorization,"Bearer ");
             if (StringUtils.equals(token, "token")) {
                 LOG.info("-------url authorization validate success{}-------", url);
+                UserInfoUtil.addCurrentUser(new BaseUser("user"));
                 chain.doFilter(request, response);
             }else authFail(httpServletResponse);
         } catch (Exception e) {

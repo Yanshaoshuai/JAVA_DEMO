@@ -1,5 +1,7 @@
 package com.javademo.api.interceptor;
 
+import com.javademo.common.pojo.BaseUser;
+import com.javademo.common.utils.UserInfoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,6 +19,8 @@ public class LogInterceptor implements HandlerInterceptor {
         long startTime = System.currentTimeMillis();
         startTimeThreadLocal.set(startTime);
         LOG.info("-------- LogInterception.preHandle --- ");
+        BaseUser currentUser = UserInfoUtil.getCurrentUser();
+        LOG.info("-------- user {}----- ", currentUser==null?"anonymous":currentUser.getUsername());
         LOG.info("Request URL: {}" , request.getRequestURL());
         return true;
     }
