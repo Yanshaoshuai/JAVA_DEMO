@@ -28,18 +28,18 @@ import java.nio.charset.StandardCharsets;
 @Order(-1)
 @WebFilter(urlPatterns = {"/api/*"})
 public class AuthFilter implements Filter {
-    private static final String[] NOT_FILTER_URL = new String[]{""};
+    private static final String[] NOT_FILTER_URI = new String[]{""};
     private final static Logger LOG = LoggerFactory.getLogger(AuthFilter.class);
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        String url = httpServletRequest.getRequestURI();
+        String uri = httpServletRequest.getRequestURI();
         LOG.info("-------doFilter--------");
         //不需要认证
-        if (StringUtils.equalsAny(url, NOT_FILTER_URL)) {
-            LOG.info("-------url not filter{}-------", url);
+        if (StringUtils.equalsAny(uri, NOT_FILTER_URI)) {
+            LOG.info("-------url not filter{}-------", uri);
             chain.doFilter(request, response);
         }
         //需要认证
@@ -48,7 +48,7 @@ public class AuthFilter implements Filter {
             String authorization = httpServletRequest.getHeader("Authorization");
             String token = StringUtils.removeStart(authorization,"Bearer ");
             if (StringUtils.equals(token, "token")) {
-                LOG.info("-------url authorization validate success{}-------", url);
+                LOG.info("-------url authorization validate success{}-------", uri);
                 UserInfoUtil.addCurrentUser(new BaseUser("user"));
                 chain.doFilter(request, response);
             }else authFail(httpServletResponse);
