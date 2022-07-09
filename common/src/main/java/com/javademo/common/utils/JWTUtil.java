@@ -1,11 +1,12 @@
 package com.javademo.common.utils;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -30,11 +31,26 @@ public class JWTUtil {
                 .signWith(privateKey,algorithm)
                 .compact();
     }
-    public static Claims getClaims(String token, Key publicKey){
+    public static Jws<Claims> getClaims(String token, PublicKey publicKey){
         return Jwts.parserBuilder()
                 .setSigningKey(publicKey)
                 .build()
-                .parseClaimsJws(token).getBody();
+                .parseClaimsJws(token);
+    }
+
+    public static Header getHeader(String token, PublicKey publicKey){
+        Jws<Claims> claims = getClaims(token, publicKey);
+        return claims.getHeader();
+    }
+
+    public static Claims getBody(String token, PublicKey publicKey){
+        Jws<Claims> claims = getClaims(token, publicKey);
+        return claims.getBody();
+    }
+
+    public static String getSignature(String token, PublicKey publicKey){
+        Jws<Claims> claims = getClaims(token, publicKey);
+        return claims.getSignature();
     }
 
     public static PrivateKey loadPrivateKey(byte[] keyBytes,SignatureAlgorithm algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -47,14 +63,5 @@ public class JWTUtil {
         X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
         KeyFactory kf = KeyFactory.getInstance(algorithm.getFamilyName());
         return kf.generatePublic(spec);
-    }
-
-    public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        KeyPair keyPair = getKeyPair(SignatureAlgorithm.RS512);
-        byte[] privateKey = keyPair.getPrivate().getEncoded();
-        byte[] publicKey = keyPair.getPublic().getEncoded();
-        String token = getToken("yan", 360000, SignatureAlgorithm.RS512, loadPrivateKey(privateKey,SignatureAlgorithm.RS512));
-        Claims claims = getClaims(token,loadPublicKey(publicKey,SignatureAlgorithm.RS512));
-        System.out.println(claims.getSubject());
     }
 }
