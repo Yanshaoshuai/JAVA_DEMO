@@ -18,9 +18,20 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
 
 public class JWTUtil {
+
     public static KeyPair getKeyPair(SignatureAlgorithm algorithm){
         return Keys.keyPairFor(algorithm);
     }
+
+    /**
+     * 使用私钥签发token
+     * 用于授权模块
+     * @param username
+     * @param expireMills
+     * @param algorithm
+     * @param privateKey
+     * @return
+     */
     public static String getToken(String username, long expireMills, SignatureAlgorithm algorithm, PrivateKey privateKey) {
         Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
@@ -31,6 +42,14 @@ public class JWTUtil {
                 .signWith(privateKey,algorithm)
                 .compact();
     }
+
+    /**
+     * 使用公钥验证token
+     * 用于业务模块
+     * @param token
+     * @param publicKey
+     * @return
+     */
     public static Jws<Claims> getClaims(String token, PublicKey publicKey){
         return Jwts.parserBuilder()
                 .setSigningKey(publicKey)
@@ -53,15 +72,5 @@ public class JWTUtil {
         return claims.getSignature();
     }
 
-    public static PrivateKey loadPrivateKey(byte[] keyBytes,SignatureAlgorithm algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance(algorithm.getFamilyName());
-        return kf.generatePrivate(spec);
-    }
 
-    public static PublicKey loadPublicKey(byte[] keyBytes, SignatureAlgorithm algorithm) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance(algorithm.getFamilyName());
-        return kf.generatePublic(spec);
-    }
 }

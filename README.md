@@ -10,7 +10,7 @@ record some java demo code
 
 ### spring controller crud
 ### oauth客户端
-### jwt
+### jwt util done
 
 ## todo
 oauth 客户端服务端
