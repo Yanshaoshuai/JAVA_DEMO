@@ -35,21 +35,22 @@ public class CryptoUtilTest {
      * DES Data Encryption Standard 数据加密标准
      * AES Advanced Encryption Standard 高级加密标准
      * 加密解密使用同一密钥--流加密(每个元素作为加密单元)/块加密(先分块,再以块为单位加密)
+     * DES明文必须是8字节正数倍 AES明文必须是16字节整数倍
      */
     @Test
     public void testDESAESUseUtil() {
         String content = "0123456701234567";
 
         Map<Transform, String> transformationKeyMap =
-                Map.of(new Transform("DES", "ECB", "PKCS5Padding", "/"), "12345678",
-                        new Transform("AES/ECB/PKCS5Padding", "/"), "1234567812345678",
-                        new Transform("DES", "ECB", "PKCS5Padding", "/"), "12345678",
-                        new Transform("AES/CBC/PKCS5Padding", "/"), "1234567812345678",
-                        //NoPadding DES明文必须是8字节正数倍 AES明文必须是16字节整数倍
+                Map.of(new Transform(CryptoUtil.Symmetric.ALG_DES, CryptoUtil.Symmetric.MOD_ECB, CryptoUtil.Symmetric.PADDING_PKCS5, "/"), "12345678",
+                        new Transform(CryptoUtil.Symmetric.ALG_DES, CryptoUtil.Symmetric.MOD_CBC, CryptoUtil.Symmetric.PADDING_PKCS5, "/"), "12345678",
                         new Transform("DES", "ECB", "NoPadding", "/"), "12345678",
-                        new Transform("AES/ECB/NoPadding", "/"), "1234567812345678",
                         new Transform("DES/CBC/NoPadding", "/"), "12345678",
-                        new Transform("AES/CBC/NoPadding", "/"), "1234567812345678");
+
+                        new Transform("AES/ECB/PKCS5Padding", "/"), "1234567812345678",
+                        new Transform("AES/CBC/PKCS5Padding", "/"), "1234567812345678",
+                        new Transform(CryptoUtil.Symmetric.ALG_AES,CryptoUtil.Symmetric.MOD_CBC,CryptoUtil.Symmetric.PADDING_NO, "/"), "1234567812345678",
+                        new Transform(CryptoUtil.Symmetric.ALG_AES,CryptoUtil.Symmetric.MOD_CBC,CryptoUtil.Symmetric.PADDING_NO, "/"), "1234567812345678");
         for (Map.Entry<Transform, String> entry : transformationKeyMap.entrySet()) {
             try {
                 String key = entry.getValue();
