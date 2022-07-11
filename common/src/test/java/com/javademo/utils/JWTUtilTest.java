@@ -22,8 +22,8 @@ public class JWTUtilTest {
         byte[] privateKeyBytes = keyPair.getPrivate().getEncoded();
         byte[] publicKeyBytes = keyPair.getPublic().getEncoded();
         try {
-            PrivateKey privateKey = CryptoUtil.loadPrivateKey(privateKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
-            PublicKey publicKey = CryptoUtil.loadPublicKey(publicKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
+            PrivateKey privateKey = CryptoUtil.Asymmetric.loadPrivateKey(privateKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
+            PublicKey publicKey = CryptoUtil.Asymmetric.loadPublicKey(publicKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
             String token  = JWTUtil.getToken("yan", 360000, SignatureAlgorithm.ES512,privateKey );
             LOG.info("header is {}", JWTUtil.getHeader(token,publicKey));
             LOG.info("body is {}", JWTUtil.getBody(token, publicKey));

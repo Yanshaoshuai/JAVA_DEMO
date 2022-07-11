@@ -1,20 +1,17 @@
 package com.javademo.utils;
 
+import com.javademo.common.pojo.Transform;
+import com.javademo.common.utils.CryptoUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 
@@ -40,53 +37,35 @@ public class CryptoUtilTest {
      * 加密解密使用同一密钥--流加密(每个元素作为加密单元)/块加密(先分块,再以块为单位加密)
      */
     @Test
-    public void testDESAES() {
-        //DES密钥必须是8字节
-        //AES密钥必须是16字节
-
-        //transformation 加密算法/加密模式/填充模式
-        // ECB/PKCS5Padding是默认值
-        Map<String, String> transformationKeyMap =
-                Map.of("DES/ECB/PKCS5Padding", "12345678", "AES/ECB/PKCS5Padding", "1234567812345678",
-                        "DES/CBC/PKCS5Padding", "12345678", "AES/CBC/PKCS5Padding", "1234567812345678",
-                        //NoPadding DES明文必须是8字节正数倍 AES明文必须是16字节整数倍
-                        "DES/ECB/NoPadding", "12345678", "AES/ECB/NoPadding", "1234567812345678",
-                        "DES/CBC/NoPadding", "12345678", "AES/CBC/NoPadding", "1234567812345678");
-
+    public void testDESAESUseUtil() {
         String content = "0123456701234567";
-        Base64.Encoder encoder = Base64.getEncoder();
-        Base64.Decoder decoder = Base64.getDecoder();
-        for (Map.Entry<String, String> entry : transformationKeyMap.entrySet()) {
+
+        Map<Transform, String> transformationKeyMap =
+                Map.of(new Transform("DES", "ECB", "PKCS5Padding", "/"), "12345678",
+                        new Transform("AES/ECB/PKCS5Padding", "/"), "1234567812345678",
+                        new Transform("DES", "ECB", "PKCS5Padding", "/"), "12345678",
+                        new Transform("AES/CBC/PKCS5Padding", "/"), "1234567812345678",
+                        //NoPadding DES明文必须是8字节正数倍 AES明文必须是16字节整数倍
+                        new Transform("DES", "ECB", "NoPadding", "/"), "12345678",
+                        new Transform("AES/ECB/NoPadding", "/"), "1234567812345678",
+                        new Transform("DES/CBC/NoPadding", "/"), "12345678",
+                        new Transform("AES/CBC/NoPadding", "/"), "1234567812345678");
+        for (Map.Entry<Transform, String> entry : transformationKeyMap.entrySet()) {
             try {
                 String key = entry.getValue();
-                String transformation = entry.getKey();
-                String[] transArr = transformation.split("/");
+                Transform transform = entry.getKey();
+                LOG.info("----------{} started-------", transform.getTransformation());
+                String encryptBase64String = CryptoUtil.Symmetric.encryptBase64String(content, key, transform);
+                LOG.info("encode bytes base64 string {}", encryptBase64String);
 
-                LOG.info("----------{} started-------", transformation);
-                Cipher cipher = Cipher.getInstance(transformation);
-                SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), transArr[0]);
-                if("CBC".equals(transArr[1])){
-                    cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec,new IvParameterSpec(key.getBytes()));
-                }else cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-
-                byte[] bytes = cipher.doFinal(content.getBytes());
-                LOG.info("encode bytes {}", Arrays.toString(bytes));
-                String s = encoder.encodeToString(bytes);
-                LOG.info("encode bytes base64 string {}", s);
-
-                byte[] decodeBytes = decoder.decode(s);
-                if("CBC".equals(transArr[1])){
-                    cipher.init(Cipher.DECRYPT_MODE, secretKeySpec,new IvParameterSpec(key.getBytes()));
-                }else cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
-                byte[] bytes1 = cipher.doFinal(decodeBytes);
-                LOG.info("decode content is {}", new String(bytes1, StandardCharsets.UTF_8));
-                LOG.info("----------{} end-------", transformation);
+                String decryptContent = CryptoUtil.Symmetric.decryptBase64String(encryptBase64String, key, transform);
+                LOG.info("decode content is {}", decryptContent);
+                LOG.info("----------{} end-------", transform.getTransformation());
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
                      IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     /**
