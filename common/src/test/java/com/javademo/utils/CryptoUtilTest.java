@@ -39,25 +39,24 @@ public class CryptoUtilTest {
      * SHA512
      */
     @Test
-    public void testMessageDigest(){
+    public void testMessageDigest() {
         List<String> algList = List.of("MD5", "SHA1", "SHA256", "SHA512");
-        String content="12345678";
+        String content = "12345678";
         MessageDigest digest = null;
         for (String alg : algList) {
             try {
-                LOG.info("-----alg {} start------",alg);
+                LOG.info("-----alg {} start------", alg);
                 digest = MessageDigest.getInstance(alg);
                 byte[] digestBytes = digest.digest(content.getBytes());
                 String hex = CryptoUtil.toHexZeroPadding(digestBytes);
-                LOG.info("result {}",hex);
-                LOG.info("-----alg {} start------",alg);
+                LOG.info("result {}", hex);
+                LOG.info("-----alg {} start------", alg);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
         }
 
     }
-
 
 
     /**
@@ -79,17 +78,17 @@ public class CryptoUtilTest {
 
                         new Transform("AES/ECB/PKCS5Padding", "/"), "1234567812345678",
                         new Transform("AES/CBC/PKCS5Padding", "/"), "1234567812345678",
-                        new Transform(CryptoUtil.Symmetric.ALG_AES,CryptoUtil.Symmetric.MOD_CBC,CryptoUtil.Symmetric.PADDING_NO, "/"), "1234567812345678",
-                        new Transform(CryptoUtil.Symmetric.ALG_AES,CryptoUtil.Symmetric.MOD_CBC,CryptoUtil.Symmetric.PADDING_NO, "/"), "1234567812345678");
+                        new Transform(CryptoUtil.Symmetric.ALG_AES, CryptoUtil.Symmetric.MOD_CBC, CryptoUtil.Symmetric.PADDING_NO, "/"), "1234567812345678",
+                        new Transform(CryptoUtil.Symmetric.ALG_AES, CryptoUtil.Symmetric.MOD_CBC, CryptoUtil.Symmetric.PADDING_NO, "/"), "1234567812345678");
         for (Map.Entry<Transform, String> entry : transformationKeyMap.entrySet()) {
             try {
                 String key = entry.getValue();
                 Transform transform = entry.getKey();
                 LOG.info("----------{} started-------", transform.getTransformation());
-                String encryptBase64String = CryptoUtil.Symmetric.encryptBase64String(content, key, Charset.defaultCharset().name(), transform);
+                String encryptBase64String = CryptoUtil.Symmetric.encryptToBase64String(content, key, Charset.defaultCharset(), transform);
                 LOG.info("encode bytes base64 string {}", encryptBase64String);
 
-                String decryptContent = CryptoUtil.Symmetric.decryptBase64String(encryptBase64String, key, Charset.defaultCharset().name(),transform);
+                String decryptContent = CryptoUtil.Symmetric.decryptFromBase64String(encryptBase64String, key, Charset.defaultCharset(), transform);
                 LOG.info("decode content is {}", decryptContent);
                 LOG.info("----------{} end-------", transform.getTransformation());
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
@@ -100,7 +99,6 @@ public class CryptoUtilTest {
         }
     }
 
-    //todo base64 换行
     /**
      * 非对称加密
      * 必须要有两个(一对)密钥
@@ -110,8 +108,8 @@ public class CryptoUtilTest {
      */
     @Test
     public void testAsymmetric() throws RuntimeException {
-        String alg="RSA";
-        String content="12345678";
+        String alg = "RSA";
+        String content = "12345678";
         try {
             KeyPairGenerator generator = KeyPairGenerator.getInstance(alg);
             KeyPair keyPair = generator.generateKeyPair();
@@ -123,27 +121,28 @@ public class CryptoUtilTest {
             byte[] publicKeyEncoded = publicKey.getEncoded();
 
             //获取Base64字符串
-            Base64.Encoder encoder = Base64.getEncoder();
+            //getMimeEncoder获取的encoder会换行
+            Base64.Encoder encoder = Base64.getMimeEncoder();
             Base64.Decoder decoder = Base64.getDecoder();
             String privateKeyBase64Str = encoder.encodeToString(privateKeyEncoded);
             String publicKeyBase64Str = encoder.encodeToString(publicKeyEncoded);
-            LOG.info("privateKeyBase64Str {}",privateKeyBase64Str);
-            LOG.info("publicKeyBase64Str {}",publicKeyBase64Str);
+            LOG.info("privateKeyBase64Str {}", privateKeyBase64Str);
+            LOG.info("publicKeyBase64Str {}", publicKeyBase64Str);
 
             //私钥加密 公钥解密
             Cipher cipher = Cipher.getInstance(alg);
-            cipher.init(Cipher.ENCRYPT_MODE,privateKey);
+            cipher.init(Cipher.ENCRYPT_MODE, privateKey);
             byte[] encryptByPrivateKeyBytes = cipher.doFinal(content.getBytes());
-            LOG.info("encryptByPrivateKeyBytes Base64 string {}",encoder.encodeToString(encryptByPrivateKeyBytes));
-            cipher.init(Cipher.DECRYPT_MODE,publicKey);
+            LOG.info("encryptByPrivateKeyBytes Base64 string {}", encoder.encodeToString(encryptByPrivateKeyBytes));
+            cipher.init(Cipher.DECRYPT_MODE, publicKey);
             byte[] decryptByPublicKeyBytes = cipher.doFinal(encryptByPrivateKeyBytes);
             LOG.info(new String(decryptByPublicKeyBytes));
 
             //公钥加密 私钥解密
-            cipher.init(Cipher.ENCRYPT_MODE,publicKey);
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             byte[] encryptByPublicKeyBytes = cipher.doFinal(content.getBytes());
-            LOG.info("encryptByPublicKeyBytes Base64 string {}",encoder.encodeToString(encryptByPublicKeyBytes));
-            cipher.init(Cipher.DECRYPT_MODE,privateKey);
+            LOG.info("encryptByPublicKeyBytes Base64 string {}", encoder.encodeToString(encryptByPublicKeyBytes));
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] decryptByPrivateKeyBytes = cipher.doFinal(encryptByPublicKeyBytes);
             LOG.info(new String(decryptByPrivateKeyBytes));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
