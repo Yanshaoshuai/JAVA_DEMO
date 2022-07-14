@@ -1,7 +1,8 @@
 package com.javademo.utils;
 
 import com.javademo.common.pojo.Transform;
-import com.javademo.common.utils.CryptoUtil;
+import com.javademo.common.utils.crypto.Digest;
+import com.javademo.common.utils.crypto.Symmetric;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public class CryptoUtilTest {
                 LOG.info("-----alg {} start------", alg);
                 digest = MessageDigest.getInstance(alg);
                 byte[] digestBytes = digest.digest(content.getBytes());
-                String hex = CryptoUtil.toHexZeroPadding(digestBytes);
+                String hex = Digest.toHexZeroPadding(digestBytes);
                 LOG.info("result {}", hex);
                 LOG.info("-----alg {} start------", alg);
             } catch (NoSuchAlgorithmException e) {
@@ -71,24 +72,24 @@ public class CryptoUtilTest {
         String content = "0123456701234567";
 
         Map<Transform, String> transformationKeyMap =
-                Map.of(new Transform(CryptoUtil.Symmetric.ALG_DES, CryptoUtil.Symmetric.MOD_ECB, CryptoUtil.Symmetric.PADDING_PKCS5, "/"), "12345678",
-                        new Transform(CryptoUtil.Symmetric.ALG_DES, CryptoUtil.Symmetric.MOD_CBC, CryptoUtil.Symmetric.PADDING_PKCS5, "/"), "12345678",
+                Map.of(new Transform(Symmetric.ALG_DES,Symmetric.MOD_ECB, Symmetric.PADDING_PKCS5, "/"), "12345678",
+                        new Transform(Symmetric.ALG_DES, Symmetric.MOD_CBC,Symmetric.PADDING_PKCS5, "/"), "12345678",
                         new Transform("DES", "ECB", "NoPadding", "/"), "12345678",
                         new Transform("DES/CBC/NoPadding", "/"), "12345678",
 
                         new Transform("AES/ECB/PKCS5Padding", "/"), "1234567812345678",
                         new Transform("AES/CBC/PKCS5Padding", "/"), "1234567812345678",
-                        new Transform(CryptoUtil.Symmetric.ALG_AES, CryptoUtil.Symmetric.MOD_CBC, CryptoUtil.Symmetric.PADDING_NO, "/"), "1234567812345678",
-                        new Transform(CryptoUtil.Symmetric.ALG_AES, CryptoUtil.Symmetric.MOD_CBC, CryptoUtil.Symmetric.PADDING_NO, "/"), "1234567812345678");
+                        new Transform(Symmetric.ALG_AES, Symmetric.MOD_CBC, Symmetric.PADDING_NO, "/"), "1234567812345678",
+                        new Transform(Symmetric.ALG_AES, Symmetric.MOD_CBC, Symmetric.PADDING_NO, "/"), "1234567812345678");
         for (Map.Entry<Transform, String> entry : transformationKeyMap.entrySet()) {
             try {
                 String key = entry.getValue();
                 Transform transform = entry.getKey();
                 LOG.info("----------{} started-------", transform.getTransformation());
-                String encryptBase64String = CryptoUtil.Symmetric.encryptToBase64String(content, key, Charset.defaultCharset(), transform);
+                String encryptBase64String = Symmetric.encryptToBase64String(content, key, Charset.defaultCharset(), transform);
                 LOG.info("encode bytes base64 string {}", encryptBase64String);
 
-                String decryptContent = CryptoUtil.Symmetric.decryptFromBase64String(encryptBase64String, key, Charset.defaultCharset(), transform);
+                String decryptContent = Symmetric.decryptFromBase64String(encryptBase64String, key, Charset.defaultCharset(), transform);
                 LOG.info("decode content is {}", decryptContent);
                 LOG.info("----------{} end-------", transform.getTransformation());
             } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |

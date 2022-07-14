@@ -1,7 +1,7 @@
 package com.javademo.utils;
 
-import com.javademo.common.utils.CryptoUtil;
 import com.javademo.common.utils.JWTUtil;
+import com.javademo.common.utils.crypto.Asymmetric;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -22,8 +22,8 @@ public class JWTUtilTest {
         byte[] privateKeyBytes = keyPair.getPrivate().getEncoded();
         byte[] publicKeyBytes = keyPair.getPublic().getEncoded();
         try {
-            PrivateKey privateKey = CryptoUtil.Asymmetric.loadPrivateKey(privateKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
-            PublicKey publicKey = CryptoUtil.Asymmetric.loadPublicKey(publicKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
+            PrivateKey privateKey = Asymmetric.loadPrivateKey(privateKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
+            PublicKey publicKey = Asymmetric.loadPublicKey(publicKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
             String token  = JWTUtil.getToken("yan", 360000, SignatureAlgorithm.ES512,privateKey );
             LOG.info("header is {}", JWTUtil.getHeader(token,publicKey));
             LOG.info("body is {}", JWTUtil.getBody(token, publicKey));
