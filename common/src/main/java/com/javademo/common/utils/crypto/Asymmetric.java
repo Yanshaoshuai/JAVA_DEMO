@@ -32,7 +32,7 @@ import java.util.Base64;
  * A和B各自持有自己的私钥和对方的公钥
  *
  * Https 客户端和服务端用非对称加密协商绘会话密钥(协商之后各自持有的对称加密密钥相同) 之后用对称加密通信
- *
+ *todo ECC try-catch exception https
  */
 public class Asymmetric {
     public Asymmetric() {
