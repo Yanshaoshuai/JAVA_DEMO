@@ -1,19 +1,16 @@
 package com.javademo.common.utils.crypto;
 
-import org.apache.tomcat.util.security.KeyStoreUtil;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.swing.*;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -115,10 +112,6 @@ public class Asymmetric {
         return signature.verify(signatureBytes);
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
-        KeyPair keyPair = generateKeypair(ALG_RSA);
-        String signature = getBase64Signature("aaa", Charset.defaultCharset(), ALG_SIGNATURE_RSA, keyPair.getPrivate(), true);
-        System.out.println(signature);
-        System.out.println(verifyBase64Signature("aaa",Charset.defaultCharset(),ALG_SIGNATURE_RSA,keyPair.getPublic(),signature,true));
+    public static void main(String[] args) {
     }
 }

@@ -1,6 +1,7 @@
 package com.javademo.utils;
 
 import com.javademo.common.pojo.Transform;
+import com.javademo.common.utils.crypto.Asymmetric;
 import com.javademo.common.utils.crypto.Digest;
 import com.javademo.common.utils.crypto.Symmetric;
 import org.junit.jupiter.api.Test;
@@ -11,17 +12,30 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SignatureException;
+import java.security.UnrecoverableEntryException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Base64;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -189,4 +203,55 @@ public class CryptoUtilTest {
     }
     //非对称加密
     //--公钥加密私钥解密/私钥加密公钥解密
+    @Test
+    public void testSignature(){
+        KeyPair keyPair = Asymmetric.generateKeypair(Asymmetric.ALG_RSA);
+        String signature = null;
+        try {
+            signature = Asymmetric.getBase64Signature("aaa", Charset.defaultCharset(), Asymmetric.ALG_SIGNATURE_RSA, keyPair.getPrivate(), true);
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+            throw new RuntimeException(e);
+        }
+        LOG.info("---signature is {}---",signature);
+        try {
+            LOG.info("---verify result is {}---",Asymmetric.verifyBase64Signature("aaa",Charset.defaultCharset(),Asymmetric.ALG_SIGNATURE_RSA,keyPair.getPublic(),signature,true));
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Test
+    public void keystoreTest(){
+        try {
+            KeyStore instance = KeyStore.getInstance(KeyStore.getDefaultType());
+            instance.load(new FileInputStream("C:\\Users\\yan\\.keystore"),"123456".toCharArray());
+            Enumeration<String> aliases = instance.aliases();
+            Iterator<String> stringIterator = aliases.asIterator();
+            while (stringIterator.hasNext()){
+                System.out.println(stringIterator.next());
+            }
+            //获取PrivateKeyEntry
+            KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)instance.getEntry("mykey", new KeyStore.PasswordProtection("123456".toCharArray()));
+
+            //获取私钥
+            PrivateKey privateKey = privateKeyEntry.getPrivateKey();
+            LOG.info(privateKey.getAlgorithm());
+            //获取证书
+            Certificate certificate = privateKeyEntry.getCertificate();
+            String type = certificate.getType();
+            LOG.info(type);
+            X509Certificate x509Certificate = (X509Certificate) certificate;
+            String sigAlgName = x509Certificate.getSigAlgName();
+            LOG.info(sigAlgName);
+            LOG.info("{}",x509Certificate.getVersion());
+            LOG.info("{}",x509Certificate.getSignature());
+            //获取公钥
+            PublicKey publicKey = certificate.getPublicKey();
+            String algorithm1 = publicKey.getAlgorithm();
+            LOG.info(algorithm1);
+
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException |
+                 UnrecoverableEntryException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
