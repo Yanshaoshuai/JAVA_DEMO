@@ -2,6 +2,7 @@ package com.javademo.common.utils.crypto;
 
 
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public  class Digest {
@@ -11,8 +12,13 @@ public  class Digest {
     public static final String SHA256 = "SHA256";
     public static final String SHA512 = "SHA512";
 
-    public static String digest(String content, Charset charset, String alg) throws NoSuchAlgorithmException {
-        java.security.MessageDigest messageDigest = java.security.MessageDigest.getInstance(alg);
+    public static String digest(String content, Charset charset, String alg){
+        MessageDigest messageDigest;
+        try {
+            messageDigest = MessageDigest.getInstance(alg);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         byte[] digestBytes = messageDigest.digest(content.getBytes(charset));
         return toHexZeroPadding(digestBytes);
     }

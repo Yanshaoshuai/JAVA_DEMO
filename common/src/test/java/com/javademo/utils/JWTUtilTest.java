@@ -18,18 +18,16 @@ public class JWTUtilTest {
 
     @Test
     public void usage() {
-        KeyPair keyPair = JWTUtil.getKeyPair(SignatureAlgorithm.ES512);
+        KeyPair keyPair = JWTUtil.getKeyPair(SignatureAlgorithm.RS512);
         byte[] privateKeyBytes = keyPair.getPrivate().getEncoded();
         byte[] publicKeyBytes = keyPair.getPublic().getEncoded();
-        try {
-            PrivateKey privateKey = Asymmetric.loadPrivateKey(privateKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
-            PublicKey publicKey = Asymmetric.loadPublicKey(publicKeyBytes, SignatureAlgorithm.ES512.getFamilyName());
-            String token  = JWTUtil.getToken("yan", 360000, SignatureAlgorithm.ES512,privateKey );
-            LOG.info("header is {}", JWTUtil.getHeader(token,publicKey));
-            LOG.info("body is {}", JWTUtil.getBody(token, publicKey));
-            LOG.info("signature is {}", JWTUtil.getSignature(token,publicKey));
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException(e);
-        }
+
+        PrivateKey privateKey = Asymmetric.loadPrivateKey(privateKeyBytes, SignatureAlgorithm.RS512.getFamilyName());
+        PublicKey publicKey = Asymmetric.loadPublicKey(publicKeyBytes, SignatureAlgorithm.RS512.getFamilyName());
+        String token = JWTUtil.getToken("yan", 360000, SignatureAlgorithm.RS512, privateKey);
+        LOG.info("header is {}", JWTUtil.getHeader(token, publicKey));
+        LOG.info("body is {}", JWTUtil.getBody(token, publicKey));
+        LOG.info("signature is {}", JWTUtil.getSignature(token, publicKey));
+
     }
 }
