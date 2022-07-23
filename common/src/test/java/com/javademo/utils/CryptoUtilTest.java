@@ -37,7 +37,7 @@ import java.util.Map;
 public class CryptoUtilTest {
 
 
-    private final static Logger LOG = LoggerFactory.getLogger(JWTUtilTest.class);
+    private final static Logger LOG = LoggerFactory.getLogger(CryptoUtilTest.class);
 
     /**
      * 散列函数 哈希 消息摘要

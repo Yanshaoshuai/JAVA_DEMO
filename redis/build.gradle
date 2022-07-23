@@ -1,0 +1,9 @@
+dependencies {
+    implementation(project(":common"))
+}
+bootJar{
+    enabled=true
+}
+jar{
+    enabled=true
+}

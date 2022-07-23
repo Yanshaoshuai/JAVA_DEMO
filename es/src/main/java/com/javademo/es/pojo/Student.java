@@ -1,4 +1,4 @@
-package com.javademo.api.pojo;
+package com.javademo.es.pojo;
 
 public class Student {
     private String name;

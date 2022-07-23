@@ -16,4 +16,6 @@ rootProject.name = 'JAVA_DEMO'
 include 'common'
 include 'api'
 include 'job'
+include 'es'
+include 'redis'
 

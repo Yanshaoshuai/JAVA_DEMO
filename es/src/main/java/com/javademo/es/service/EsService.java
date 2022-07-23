@@ -1,9 +1,9 @@
-package com.javademo.api.service;
+package com.javademo.es.service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.javademo.api.pojo.Student;
+import com.javademo.es.pojo.Student;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
-public class EsTestService {
+public class EsService {
     private final RestClient restClient;
 
-    public EsTestService(RestClient restClient) {
+    public EsService(RestClient restClient) {
         this.restClient = restClient;
     }
 

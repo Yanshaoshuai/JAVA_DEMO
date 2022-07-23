@@ -1,4 +1,4 @@
-package com.javademo.api.config;
+package com.javademo.es.config;
 
 
 import org.apache.http.HttpHost;

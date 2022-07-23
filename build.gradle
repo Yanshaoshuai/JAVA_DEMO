@@ -44,6 +44,8 @@ subprojects{
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
         implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.9'
         implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '8.2.2'
+        implementation group: 'redis.clients', name: 'jedis'
+
     }
 }
 
