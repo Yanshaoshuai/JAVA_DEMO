@@ -1,11 +1,14 @@
 package com.javademo.redis;
 
+import com.javademo.redis.config.JedisConfigEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.Tuple;
 
 import java.util.List;
@@ -15,13 +18,22 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 public class JedisTest {
-    @Autowired
-    private Jedis jedis;
 
+    @Autowired
+    private JedisConfigEntity configEntity;
     private final static Logger LOG = LoggerFactory.getLogger(JedisTest.class);
+
+    public static Jedis getNewJedisClient(JedisConfigEntity configEntity) {
+        Jedis jedis = new Jedis(configEntity.getHost(), configEntity.getPort());
+        if (StringUtils.isNotEmpty(configEntity.getPassword())) {
+            jedis.auth(configEntity.getPassword());
+        }
+        return jedis;
+    }
 
     @Test
     public void testString() {
+        Jedis jedis = getNewJedisClient(configEntity);
         jedis.set("a", "1");
         String av = jedis.get("a");
         LOG.info(av);
@@ -39,6 +51,8 @@ public class JedisTest {
 
     @Test
     public void testList() {
+        Jedis jedis = getNewJedisClient(configEntity);
+
         jedis.lpush("listA", "5", "4", "3", "2", "1");
         List<String> listALR = jedis.lrange("listA", 0, 4);
         LOG.info(listALR.toString());
@@ -54,6 +68,8 @@ public class JedisTest {
 
     @Test
     public void testHash() {
+        Jedis jedis = getNewJedisClient(configEntity);
+
         jedis.del("xiaoming");
         jedis.hset("xiaoming", Map.of("age", "12"));
         String age = jedis.hget("xiaoming", "age");
@@ -82,6 +98,8 @@ public class JedisTest {
 
     @Test
     public void testSet() {
+        Jedis jedis = getNewJedisClient(configEntity);
+
         jedis.sadd("even", "2", "4", "6", "8", "10", "10");
         Set<String> even = jedis.smembers("even");
         LOG.info("even {}", even);
@@ -119,6 +137,8 @@ public class JedisTest {
 
     @Test
     public void testZset() {
+        Jedis jedis = getNewJedisClient(configEntity);
+
         jedis.zadd("student_score", Map.of("xiaoming", 99.0, "xiaohong", 88.0, "xiaobai", 77.5));
         Set<String> student_score = jedis.zrange("student_score", 0, 1);
         LOG.info(student_score.toString());
@@ -133,4 +153,33 @@ public class JedisTest {
         jedis.del("student_score");
     }
 
+    @Test
+    public void pubAndSub() {
+
+        new Thread(() -> {
+            Jedis jedis = getNewJedisClient(configEntity);
+
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            for (int i = 0; i < 10; i++) {
+                jedis.publish("mychannel", "count=" + i);
+            }
+        }).start();
+        Jedis jedis = getNewJedisClient(configEntity);
+
+        jedis.subscribe(new JedisPubSub() {
+            @Override
+            public void onSubscribe(String channel, int subscribedChannels) {
+                LOG.info("channel {} , subscribedChannels {} onSubscribe", channel, subscribedChannels);
+            }
+
+            @Override
+            public void onMessage(String channel, String message) {
+                LOG.info("channel {},message {}", channel, message);
+            }
+        }, "mychannel");
+    }
 }
