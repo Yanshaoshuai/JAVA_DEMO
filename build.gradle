@@ -45,7 +45,7 @@ subprojects{
         implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.9'
         implementation group: 'org.elasticsearch.client', name: 'elasticsearch-rest-client', version: '8.2.2'
         implementation group: 'redis.clients', name: 'jedis'
-
+        implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0'
     }
 }
 

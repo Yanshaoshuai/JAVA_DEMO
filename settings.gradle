@@ -18,4 +18,5 @@ include 'api'
 include 'job'
 include 'es'
 include 'redis'
+include 'mysql'
 

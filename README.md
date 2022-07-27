@@ -20,5 +20,12 @@ code gen
 ssl
 es
 redis
+zookeeper
+etcd
+mysql
+flink
+netty
+vert.x
+disruptor
 
 

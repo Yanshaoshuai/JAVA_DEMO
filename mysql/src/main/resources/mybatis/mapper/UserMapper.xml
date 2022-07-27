@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javademo.mysql.mybatis.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.javademo.mysql.mybatis.model.User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, nick_name, age,create_date
+    </sql>
+
+    <select id="getAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user
+    </select>
+
+    <select id="getUser" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        user
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertUser" parameterType="com.javademo.mysql.mybatis.model.User">
+        INSERT INTO
+        user
+        (nick_name, age)
+        VALUES
+        (#{nickName}, #{age})
+    </insert>
+
+    <update id="updateUser" parameterType="com.javademo.mysql.mybatis.model.User">
+        UPDATE
+        user
+        SET
+        <if test="nickName != null">nick_name = #{nickName},</if>
+        <if test="age != null">age = #{age},</if>
+        <if test="createDate != null">create_date = #{createDate}</if>
+        WHERE
+        id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="java.lang.Long">
+        DELETE FROM
+        user
+        WHERE
+        id = #{id}
+    </delete>
+
+</mapper>
