@@ -1,6 +1,5 @@
 package com.javademo.common.utils;
 
-import com.google.gson.JsonObject;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -10,7 +9,6 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 
 
 public class FreeMarkerUtil {
@@ -30,7 +28,7 @@ public class FreeMarkerUtil {
         cfg.setWrapUncheckedExceptions(true);
     }
 
-    public static String generateHtml(String templateName, Map param) throws IOException, TemplateException {
+    public static String generateHtml(String templateName, Object param) throws IOException, TemplateException {
         Template template = cfg.getTemplate(templateName);
         StringWriter writer=new StringWriter();
         template.process(param,writer);
