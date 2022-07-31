@@ -1,37 +1,54 @@
 package com.javademo.utils;
 
 
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.javademo.common.utils.FreeMarkerUtil;
 import com.javademo.common.utils.PdfUtil;
 import freemarker.template.TemplateException;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 
 public class PdfTest {
     private final static Logger LOG = LoggerFactory.getLogger(PdfTest.class);
+
     @Test
-    public void testGenPdfFromTemp(){
-        Map<String, Object> param = Map.of("title", "Colossal", "imgPath", "colossal.jpg", "imgName", "Colossal");
+    public void testHeader() {
+        File file = FileUtils.getFile("E:\\File\\code\\JAVA_DEMO\\common\\src\\test\\resources\\template\\colossal.jpg");
+        byte[] bytes;
+        try {
+            bytes = FileUtils.readFileToByteArray(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String base64str = Base64.getEncoder().encodeToString(bytes);
+        Map<String, Object> param = Map.of("title", "Colossal", "imgPath", "data:image/jpeg;base64," + base64str, "imgName", "Colossal");
         try {
             String html = FreeMarkerUtil.generateHtml("test.html", param);
-            LOG.info("html:----------\n {} \n---------------",html);
-            PdfUtil.createPdf(html,new FileOutputStream("test.pdf"));
+            LOG.info("html:----------\n {} \n---------------", html);
+            PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream("test.pdf")));
+            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler("header.html"));
+            ConverterProperties props = new ConverterProperties();
+            PdfUtil.createPdf(html, pdfDocument, props);
         } catch (IOException | TemplateException e) {
             throw new RuntimeException(e);
         }
     }
     @Test
-    public void testGenPdfFromTempWithHeaderFooter(){
+    public void testFooter(){
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("test-footer.pdf");
-            FileInputStream fileInputStream = new FileInputStream("E:\\File\\code\\JAVA_DEMO\\common\\nameddestinations.pdf");
-            PdfUtil.addFooter("",fileOutputStream,fileInputStream);
+            PdfUtil.addFooter("footer.html",new FileOutputStream("test-with-footer.pdf"),new FileInputStream("E:\\File\\code\\JAVA_DEMO\\common\\test.pdf"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
