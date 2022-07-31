@@ -1,0 +1,14 @@
+dependencies {
+    implementation(project(":common"))
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    // https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter
+    implementation group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '2.2.2'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
+
+}
+bootJar{
+    enabled=true
+}
+jar{
+    enabled=true
+}

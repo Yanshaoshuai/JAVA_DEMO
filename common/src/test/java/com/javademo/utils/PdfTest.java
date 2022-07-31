@@ -2,9 +2,13 @@ package com.javademo.utils;
 
 
 import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Image;
 import com.javademo.common.utils.FreeMarkerUtil;
 import com.javademo.common.utils.PdfUtil;
 import freemarker.template.TemplateException;
@@ -18,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 public class PdfTest {
@@ -37,8 +42,11 @@ public class PdfTest {
         try {
             String html = FreeMarkerUtil.generateHtml("test.html", param);
             LOG.info("html:----------\n {} \n---------------", html);
+            String headerHtml = FreeMarkerUtil.generateHtml("header.html", null);
             PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream("test.pdf")));
-            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler("header.html"));
+//            List<IElement> iElements = HtmlConverter.convertToElements(headerHtml);
+//            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler(iElements.get(0)));
+            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler(new Image(ImageDataFactory.create(bytes))));
             ConverterProperties props = new ConverterProperties();
             PdfUtil.createPdf(html, pdfDocument, props);
         } catch (IOException | TemplateException e) {

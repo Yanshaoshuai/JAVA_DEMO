@@ -13,6 +13,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Image;
 import freemarker.template.TemplateException;
 
 import java.io.IOException;
@@ -34,9 +35,9 @@ public class PdfUtil {
      * generate header on page end
      */
     public static class HeaderEventHandler implements IEventHandler {
-        private String header;
+        private IElement header;
 
-        public HeaderEventHandler(String header) {
+        public HeaderEventHandler(IElement header) {
             this.header = header;
         }
 
@@ -44,17 +45,14 @@ public class PdfUtil {
         public void handleEvent(Event currentEvent) {
             PdfDocumentEvent documentEvent = (PdfDocumentEvent) currentEvent;
             PdfPage page = documentEvent.getPage();
-            List<IElement> headerIElements;
-            try {
-                headerIElements = HtmlConverter.convertToElements(FreeMarkerUtil.generateHtml(header, null));
-            } catch (IOException | TemplateException e) {
-                throw new RuntimeException(e);
-            }
 
             Rectangle pageSize = page.getPageSize();
-            Canvas headerCanvas = new Canvas(page, pageSize);
-            headerIElements.forEach(iElement -> headerCanvas.add((IBlockElement) iElement));
-
+            Canvas headerCanvas = new Canvas(page, new Rectangle(pageSize.getLeft(),pageSize.getTop()-30,100,100));
+            if(header instanceof Image){
+                headerCanvas.add((Image) header);
+            }else {
+                headerCanvas.add((IBlockElement) header);
+            }
         }
     }
 
