@@ -45,7 +45,7 @@ public class JedisConfigEntity {
     }
 
 
-    public static class Pool{
+    public static class Pool {
         private Integer maxIdle;
 
         private Integer maxTotal;

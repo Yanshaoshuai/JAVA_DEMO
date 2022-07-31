@@ -47,10 +47,10 @@ public class PdfUtil {
             PdfPage page = documentEvent.getPage();
 
             Rectangle pageSize = page.getPageSize();
-            Canvas headerCanvas = new Canvas(page, new Rectangle(pageSize.getLeft(),pageSize.getTop()-30,100,100));
-            if(header instanceof Image){
+            Canvas headerCanvas = new Canvas(page, new Rectangle(pageSize.getLeft(), pageSize.getTop() - 30, 100, 100));
+            if (header instanceof Image) {
                 headerCanvas.add((Image) header);
-            }else {
+            } else {
                 headerCanvas.add((IBlockElement) header);
             }
         }

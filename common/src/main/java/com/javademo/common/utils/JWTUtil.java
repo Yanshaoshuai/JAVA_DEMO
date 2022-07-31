@@ -14,13 +14,14 @@ import java.util.Date;
 
 public class JWTUtil {
 
-    public static KeyPair getKeyPair(SignatureAlgorithm algorithm){
+    public static KeyPair getKeyPair(SignatureAlgorithm algorithm) {
         return Keys.keyPairFor(algorithm);
     }
 
     /**
      * 使用私钥签发token
      * 用于授权模块
+     *
      * @param username
      * @param expireMills
      * @param algorithm
@@ -34,35 +35,36 @@ public class JWTUtil {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + expireMills))
-                .signWith(privateKey,algorithm)
+                .signWith(privateKey, algorithm)
                 .compact();
     }
 
     /**
      * 使用公钥验证token
      * 用于业务模块
+     *
      * @param token
      * @param publicKey
      * @return
      */
-    public static Jws<Claims> getClaims(String token, PublicKey publicKey){
+    public static Jws<Claims> getClaims(String token, PublicKey publicKey) {
         return Jwts.parserBuilder()
                 .setSigningKey(publicKey)
                 .build()
                 .parseClaimsJws(token);
     }
 
-    public static Header getHeader(String token, PublicKey publicKey){
+    public static Header getHeader(String token, PublicKey publicKey) {
         Jws<Claims> claims = getClaims(token, publicKey);
         return claims.getHeader();
     }
 
-    public static Claims getBody(String token, PublicKey publicKey){
+    public static Claims getBody(String token, PublicKey publicKey) {
         Jws<Claims> claims = getClaims(token, publicKey);
         return claims.getBody();
     }
 
-    public static String getSignature(String token, PublicKey publicKey){
+    public static String getSignature(String token, PublicKey publicKey) {
         Jws<Claims> claims = getClaims(token, publicKey);
         return claims.getSignature();
     }

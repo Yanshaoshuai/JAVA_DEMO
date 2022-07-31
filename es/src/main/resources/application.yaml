@@ -1,5 +1,5 @@
 elasticsearch-rest-client:
-    username: elastic
-    password: changeme
-    servers:
-      - 172.16.0.4:9200
+  username: elastic
+  password: changeme
+  servers:
+    - 172.16.0.4:9200

@@ -46,12 +46,12 @@ public class AuthFilter implements Filter {
         try {
             httpServletRequest.getAuthType();
             String authorization = httpServletRequest.getHeader("Authorization");
-            String token = StringUtils.removeStart(authorization,"Bearer ");
+            String token = StringUtils.removeStart(authorization, "Bearer ");
             if (StringUtils.equals(token, "token")) {
                 LOG.info("-------url authorization validate success{}-------", uri);
                 UserInfoUtil.addCurrentUser(new BaseUser("user"));
                 chain.doFilter(request, response);
-            }else authFail(httpServletResponse);
+            } else authFail(httpServletResponse);
         } catch (Exception e) {
             LOG.error("authorization validate exception", e);
             authFail(httpServletResponse);

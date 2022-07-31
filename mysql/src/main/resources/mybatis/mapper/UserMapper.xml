@@ -12,7 +12,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, nick_name, age,create_date
+        id
+        , nick_name, age,create_date
     </sql>
 
     <select id="getAll" resultMap="BaseResultMap">
@@ -30,11 +31,9 @@
     </select>
 
     <insert id="insertUser" parameterType="com.javademo.mysql.mybatis.model.User">
-        INSERT INTO
-        user
-        (nick_name, age)
-        VALUES
-        (#{nickName}, #{age})
+        INSERT INTO user
+            (nick_name, age)
+        VALUES (#{nickName}, #{age})
     </insert>
 
     <update id="updateUser" parameterType="com.javademo.mysql.mybatis.model.User">
@@ -49,10 +48,9 @@
     </update>
 
     <delete id="deleteUser" parameterType="java.lang.Long">
-        DELETE FROM
-        user
-        WHERE
-        id = #{id}
+        DELETE
+        FROM user
+        WHERE id = #{id}
     </delete>
 
 </mapper>

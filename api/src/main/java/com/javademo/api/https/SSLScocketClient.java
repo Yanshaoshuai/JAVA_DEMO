@@ -3,7 +3,11 @@ package com.javademo.api.https;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class SSLScocketClient {
 
@@ -12,8 +16,8 @@ public class SSLScocketClient {
         SocketFactory factory = SSLSocketFactory.getDefault();
         try (SSLSocket socket = (SSLSocket) factory.createSocket(host, port)) {
 
-            socket.setEnabledCipherSuites(new String[] { "TLS_AES_128_GCM_SHA256" });
-            socket.setEnabledProtocols(new String[] { "TLSv1.3" });
+            socket.setEnabledCipherSuites(new String[]{"TLS_AES_128_GCM_SHA256"});
+            socket.setEnabledProtocols(new String[]{"TLSv1.3"});
 
             String message = "Hello World Message";
             System.out.println("sending message: " + message);

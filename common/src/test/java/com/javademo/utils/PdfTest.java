@@ -6,7 +6,6 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.javademo.common.utils.FreeMarkerUtil;
 import com.javademo.common.utils.PdfUtil;
@@ -21,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.List;
 import java.util.Map;
 
 public class PdfTest {
@@ -52,10 +50,11 @@ public class PdfTest {
             throw new RuntimeException(e);
         }
     }
+
     @Test
-    public void testFooter(){
+    public void testFooter() {
         try {
-            PdfUtil.addFooter("footer.html",new FileOutputStream("test-with-footer.pdf"),new FileInputStream("E:\\File\\code\\JAVA_DEMO\\common\\test.pdf"));
+            PdfUtil.addFooter("footer.html", new FileOutputStream("test-with-footer.pdf"), new FileInputStream("E:\\File\\code\\JAVA_DEMO\\common\\test.pdf"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

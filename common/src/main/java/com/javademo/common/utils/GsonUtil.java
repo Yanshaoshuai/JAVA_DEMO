@@ -106,12 +106,14 @@ public class GsonUtil {
     public static String beanToJson(Object object) {
         return gson.toJson(object);
     }
+
     /**
      * 把对象转成JsonObject
      */
-    public static JsonObject beanToJsonObj(Object object){
+    public static JsonObject beanToJsonObj(Object object) {
         return JsonParser.parseString(gson.toJson(object)).getAsJsonObject();
     }
+
     public static void main(String[] args) {
         JsonObject jsonObject = new JsonObject();
         Map<String, String> stringStringMap = Map.of("11", "22");

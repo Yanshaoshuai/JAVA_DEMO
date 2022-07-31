@@ -13,16 +13,16 @@ import java.util.concurrent.TimeUnit;
 public class ScheduleTask {
     private final static Logger LOG = LoggerFactory.getLogger(ScheduleTask.class);
 
-    private static int unsafe_count=0;
-    private static int unsafe_count2=0;
+    private static int unsafe_count = 0;
+    private static int unsafe_count2 = 0;
 
     /**
      * 每隔3秒执行一次 任务执行需要4s
      */
-    @Scheduled(fixedDelay = 1,timeUnit = TimeUnit.SECONDS)
-    public void longTimeJob(){
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.SECONDS)
+    public void longTimeJob() {
         try {
-            LOG.info("long time job start , thread name is {} , unsafe_count is {}",Thread.currentThread().getName(),unsafe_count++);
+            LOG.info("long time job start , thread name is {} , unsafe_count is {}", Thread.currentThread().getName(), unsafe_count++);
             TimeUnit.SECONDS.sleep(4);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -30,9 +30,9 @@ public class ScheduleTask {
     }
 
     @Scheduled(cron = "* * * * * *")
-    public void  cronJob(){
+    public void cronJob() {
         try {
-            LOG.info("cronJob start , thread name is {} , unsafe_count2 is {}",Thread.currentThread().getName(),unsafe_count2++);
+            LOG.info("cronJob start , thread name is {} , unsafe_count2 is {}", Thread.currentThread().getName(), unsafe_count2++);
             TimeUnit.SECONDS.sleep(4);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -47,9 +47,9 @@ public class ScheduleTask {
      */
     @Scheduled(cron = "* * * * * *")
     @Async
-    public void  cronJobNotWaitLastTaskFinish(){
+    public void cronJobNotWaitLastTaskFinish() {
         try {
-            LOG.info("cronJobNotWaitLastTaskFinish start , thread name is {} , unsafe_count2 is {}",Thread.currentThread().getName(),unsafe_count2++);
+            LOG.info("cronJobNotWaitLastTaskFinish start , thread name is {} , unsafe_count2 is {}", Thread.currentThread().getName(), unsafe_count2++);
             TimeUnit.SECONDS.sleep(4);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

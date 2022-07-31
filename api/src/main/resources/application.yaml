@@ -10,7 +10,7 @@ server:
     keyStoreType: PKCS12
     #证书别名
     keyAlias: tomcat
-#    client-auth: need
+    #    client-auth: need
     key-store-provider: SUN
     trust-store-provider: SUN
 file:

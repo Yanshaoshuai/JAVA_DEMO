@@ -9,15 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @GetMapping("/hello")
-    public String hello(){
+    public String hello() {
         return "hello";
     }
+
     @GetMapping("/illegal/exception")
-    public void illegalArgumentException(){
+    public void illegalArgumentException() {
         throw new IllegalArgumentException("argument illegal");
     }
+
     @GetMapping("/exception")
-    public void exception(){
+    public void exception() {
         throw new NullPointerException("argument illegal");
     }
 

@@ -21,13 +21,13 @@ public class MybatisTest {
     }
 
     @Test
-    public void testCRUD(){
-        userMapper.insertUser(new User("少帅",26));
+    public void testCRUD() {
+        userMapper.insertUser(new User("少帅", 26));
         List<User> all = userMapper.getAll();
         LOG.info(all.toString());
         User user = userMapper.getUser(all.get(0).getId());
         LOG.info(user.toString());
-        for(User userTemp:all){
+        for (User userTemp : all) {
             userMapper.deleteUser(userTemp.getId());
         }
         all = userMapper.getAll();

@@ -12,7 +12,7 @@ public class ResultOld<T> {
 
     public ResultOld(int code, String status, String message, T data) {
         this.code = code;
-        this.status=status;
+        this.status = status;
         this.message = message;
         this.data = data;
     }
@@ -21,9 +21,11 @@ public class ResultOld<T> {
     public static <T> Result<T> error() {
         return new Result<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null, null);
     }
+
     public static <T> Result<T> error(HttpStatus status) {
         return new Result<>(status.value(), status.getReasonPhrase(), null, null);
     }
+
     public static <T> Result<T> error(String message) {
         return new Result<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), message, null);
     }

@@ -22,16 +22,16 @@ public class EsService {
     }
 
     public Student getById(String id) throws IOException {
-        Request request = new Request("GET",String.format("/student/_doc/%s",id));
+        Request request = new Request("GET", String.format("/student/_doc/%s", id));
         Response response = restClient.performRequest(request);
         HttpEntity entity = response.getEntity();
         String entityStr = EntityUtils.toString(entity);
-        Gson gson=new Gson();
+        Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(entityStr, JsonObject.class);
-        Student student=new Student();
-        if(jsonObject.has("_source")){
+        Student student = new Student();
+        if (jsonObject.has("_source")) {
             JsonElement source = jsonObject.get("_source");
-            student=gson.fromJson(source,Student.class);
+            student = gson.fromJson(source, Student.class);
         }
         return student;
     }

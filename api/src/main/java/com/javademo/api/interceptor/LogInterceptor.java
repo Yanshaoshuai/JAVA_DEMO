@@ -6,11 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class LogInterceptor implements HandlerInterceptor {
-    private final ThreadLocal<Long> startTimeThreadLocal=new ThreadLocal<>();
+    private final ThreadLocal<Long> startTimeThreadLocal = new ThreadLocal<>();
     private final static Logger LOG = LoggerFactory.getLogger(LogInterceptor.class);
 
 
@@ -20,15 +21,15 @@ public class LogInterceptor implements HandlerInterceptor {
         startTimeThreadLocal.set(startTime);
         LOG.info("-------- LogInterception.preHandle --- ");
         BaseUser currentUser = UserInfoUtil.getCurrentUser();
-        LOG.info("-------- user {}----- ", currentUser==null?"anonymous":currentUser.getUsername());
-        LOG.info("Request URL: {}" , request.getRequestURL());
+        LOG.info("-------- user {}----- ", currentUser == null ? "anonymous" : currentUser.getUsername());
+        LOG.info("Request URL: {}", request.getRequestURL());
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         LOG.info("-------- LogInterception.postHandle --- ");
-        LOG.info("Request URL: {}" , request.getRequestURL());
+        LOG.info("Request URL: {}", request.getRequestURL());
     }
 
     @Override
@@ -37,8 +38,8 @@ public class LogInterceptor implements HandlerInterceptor {
 
         long startTime = startTimeThreadLocal.get();
         long endTime = System.currentTimeMillis();
-        LOG.info("Request URL: {}" , request.getRequestURL());
+        LOG.info("Request URL: {}", request.getRequestURL());
 
-        LOG.info("Time Taken: {}" , (endTime - startTime));
+        LOG.info("Time Taken: {}", (endTime - startTime));
     }
 }

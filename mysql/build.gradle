@@ -6,9 +6,9 @@ dependencies {
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
 
 }
-bootJar{
-    enabled=true
+bootJar {
+    enabled = true
 }
-jar{
-    enabled=true
+jar {
+    enabled = true
 }

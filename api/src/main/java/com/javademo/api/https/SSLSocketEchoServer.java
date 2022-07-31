@@ -3,7 +3,11 @@ package com.javademo.api.https;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class SSLSocketEchoServer {
@@ -13,8 +17,8 @@ public class SSLSocketEchoServer {
         ServerSocketFactory factory = SSLServerSocketFactory.getDefault();
         try (SSLServerSocket listener = (SSLServerSocket) factory.createServerSocket(port)) {
             listener.setNeedClientAuth(true);
-            listener.setEnabledCipherSuites(new String[] { "TLS_AES_128_GCM_SHA256" });
-            listener.setEnabledProtocols(new String[] { "TLSv1.3" });
+            listener.setEnabledCipherSuites(new String[]{"TLS_AES_128_GCM_SHA256"});
+            listener.setEnabledProtocols(new String[]{"TLSv1.3"});
             System.out.println("listening for messages...");
             try (Socket socket = listener.accept()) {
 

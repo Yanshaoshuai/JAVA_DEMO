@@ -4,16 +4,12 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -28,7 +24,7 @@ public class FileService {
     public FileService(@Value("${file.upload-dir}") String uploadPath) {
         this.uploadPath = uploadPath;
         Path path = Path.of(uploadPath);
-        if(!Files.exists(path)){
+        if (!Files.exists(path)) {
             try {
                 Files.createDirectories(path);
             } catch (IOException e) {
@@ -42,7 +38,7 @@ public class FileService {
         try {
             File distFile = new File(uploadPath + file.getOriginalFilename());
             InputStream inputStream = file.getInputStream();
-            IOUtils.copy(inputStream,new FileOutputStream(distFile));
+            IOUtils.copy(inputStream, new FileOutputStream(distFile));
             return file.getOriginalFilename();
         } catch (IOException ex) {
             throw ex;

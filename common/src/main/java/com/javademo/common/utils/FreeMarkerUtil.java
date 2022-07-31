@@ -12,7 +12,9 @@ import java.io.StringWriter;
 
 
 public class FreeMarkerUtil {
-    private FreeMarkerUtil(){}
+    private FreeMarkerUtil() {
+    }
+
     private static final Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
 
     static {
@@ -30,8 +32,8 @@ public class FreeMarkerUtil {
 
     public static String generateHtml(String templateName, Object param) throws IOException, TemplateException {
         Template template = cfg.getTemplate(templateName);
-        StringWriter writer=new StringWriter();
-        template.process(param,writer);
+        StringWriter writer = new StringWriter();
+        template.process(param, writer);
         return writer.toString();
     }
 }

@@ -18,16 +18,16 @@ public class EsServiceTest {
     private final EsService esService;
 
     @Autowired
-    public EsServiceTest(EsService esService){
-        this.esService=esService;
+    public EsServiceTest(EsService esService) {
+        this.esService = esService;
     }
 
     @Test
-    public void testGetById(){
+    public void testGetById() {
         try {
             Student student = esService.getById("1");
-            assert student!=null;
-            Gson gson=new Gson();
+            assert student != null;
+            Gson gson = new Gson();
             LOG.info(gson.toJson(student));
         } catch (IOException e) {
             throw new RuntimeException(e);

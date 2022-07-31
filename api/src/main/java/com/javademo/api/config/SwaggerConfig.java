@@ -18,7 +18,7 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
-                .components(new Components().addSecuritySchemes("BearerAuth",new SecurityScheme().name("Bearer Authorization").type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
+                .components(new Components().addSecuritySchemes("BearerAuth", new SecurityScheme().name("Bearer Authorization").type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
                 .info(new Info().title("JAVA_DEMO API")
                         .description("java demo api module")
                         .version("V1.0")

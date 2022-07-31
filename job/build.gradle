@@ -1,9 +1,9 @@
 dependencies {
     implementation(project(":common"))
 }
-bootJar{
-    enabled=true
+bootJar {
+    enabled = true
 }
-jar{
-    enabled=true
+jar {
+    enabled = true
 }

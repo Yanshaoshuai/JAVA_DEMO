@@ -55,7 +55,7 @@ public class Transform {
         this.delimiter = delimiter;
     }
 
-    public String getTransformation(){
-        return StringUtils.joinWith(delimiter,alg,mod,padding);
+    public String getTransformation() {
+        return StringUtils.joinWith(delimiter, alg, mod, padding);
     }
 }

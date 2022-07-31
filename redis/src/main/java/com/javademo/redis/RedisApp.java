@@ -10,6 +10,6 @@ import java.io.IOException;
 @EnableConfigurationProperties
 public class RedisApp {
     public static void main(String[] args) throws IOException {
-        SpringApplication.run(RedisApp.class,args);
+        SpringApplication.run(RedisApp.class, args);
     }
 }

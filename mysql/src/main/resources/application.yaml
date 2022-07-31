@@ -15,5 +15,5 @@ spring:
       maximum-pool-size: 5
 mybatis:
   type-aliases-package: com.javademo.mysql.mybatis.model
-#  config-location: classpath:mybatis/mybatis-config.xml
+  #  config-location: classpath:mybatis/mybatis-config.xml
   mapper-locations: classpath:mybatis/mapper/*.xml

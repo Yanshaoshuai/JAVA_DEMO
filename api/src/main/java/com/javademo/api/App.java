@@ -14,6 +14,6 @@ import java.io.IOException;
 public class App {
     public static void main(String[] args) throws IOException {
         ExecScriptUtil.execWindows("dir");
-        SpringApplication.run(App.class,args);
+        SpringApplication.run(App.class, args);
     }
 }

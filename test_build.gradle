@@ -34,18 +34,18 @@ plugins {
     id 'java'
     id 'idea'
     //非核心插件
-    id  'org.springframework.boot' version '2.6.4'  //指定springboot版本
+    id 'org.springframework.boot' version '2.6.4'  //指定springboot版本
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'//使用此插件dependencies中可以不指定版本
 }
 
 //自定义插件
 //建立插件工程 配置参数 发布和使用(发布一个jar)
 //简单本地插件
-class MyPlugin implements Plugin<Project>{
+class MyPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.task("myPlugin"){
+        project.task("myPlugin") {
             group("learn")
             println "execute my plugin"
         }
@@ -91,7 +91,7 @@ apply plugin: MyPlugin
 
 //原码和资源目录配置
 //源文件及位置定义 相关依赖管理 定义编译输出
-sourceSets{
+sourceSets {
 //默认原码和资源目录
     main {
         java {
@@ -110,15 +110,15 @@ sourceSets{
 }
 
 //Task
-task taskA{
+task taskA {
     //执行阶段执行
-    doFirst{
+    doFirst {
         println "firstA"
     }
     group("learn")//配置分组
     //初始化阶段执行
     println "taskA"
-    doLast{
+    doLast {
         println "lastA"
     }
     description("描述")
@@ -127,55 +127,54 @@ task taskA{
 //条件执行
 //taskA.onlyIf{1==2}
 
-task("taskB"){
+task("taskB") {
     group("learn")
     println "taskB"
 }
 
-tasks.create("taskC"){
+tasks.create("taskC") {
     group("learn")
     println "taskC"
-    dependsOn(taskA,taskB)//依赖某些task 当前task在它所依赖的项目之后执行
+    dependsOn(taskA, taskB)//依赖某些task 当前task在它所依赖的项目之后执行
 }
 //相当于java finally
 taskC.finalizedBy taskA
 //懒加载方式注册
-tasks.register("taskD"){
+tasks.register("taskD") {
     group("learn")
     println "taskD"
 }
 
 //直接执行
-tasks.with(){
+tasks.with() {
     println "taskE"
 }
 
-tasks.withType(Number){
+tasks.withType(Number) {
     println "taskF"
 }
 
-println "->" +tasks.getByPath("taskA").path
+println "->" + tasks.getByPath("taskA").path
 println "->" + tasks.findByPath("taskA").path
 
 
-class GreetingTask extends DefaultTask{
+class GreetingTask extends DefaultTask {
     @Input
-    String who="yan"
+    String who = "yan"
 
     @TaskAction
-    def hello(){
+    def hello() {
         println "hello $who"
     }
 }
 
-task myHello(type: GreetingTask){
+task myHello(type: GreetingTask) {
     group("learn")
 }
 
 
-
-task myJar(type: Jar){
-    from compileJava.outputs,"src/main/resources"
+task myJar(type: Jar) {
+    from compileJava.outputs, "src/main/resources"
     manifest {
         attributes(
                 "Manifest-Version": 1.0,
@@ -206,7 +205,7 @@ repositories {
 
     //本地仓库
     repositories {
-        flatDir(dir: './lib' , name: 'lib directory')
+        flatDir(dir: './lib', name: 'lib directory')
     }
 }
 
@@ -244,7 +243,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-task  xx{
+task xx {
     //获取xyz 路径
     println "real path" + configurations.xyz.files.first()
 
@@ -258,9 +257,6 @@ task  xx{
 
 group 'org.example'
 version '1.0-SNAPSHOT'
-
-
-
 
 
 test {
@@ -295,15 +291,14 @@ tasks.forEach(task -> println task.name)
 //defaultTasks("myTask")
 
 
-
 //gradle生命周期
 //初始化: 解析setting.gradle:确定哪些project会参与构建并创建project实例
 //配置阶段: 解析project,获取project(test_build.gradle)下的所有task以及其它配置,解析出一张有向无环图
 //执行阶段: 会根据命令行中指定的task执行相应的任务
 
-project.beforeEvaluate{
+project.beforeEvaluate {
     println "project.beforeEvaluate..."
 }
-project.afterEvaluate{
+project.afterEvaluate {
     println "project.afterEvaluate..."
 }

@@ -10,6 +10,6 @@ import java.io.IOException;
 @EnableConfigurationProperties
 public class EsApp {
     public static void main(String[] args) throws IOException {
-        SpringApplication.run(EsApp.class,args);
+        SpringApplication.run(EsApp.class, args);
     }
 }

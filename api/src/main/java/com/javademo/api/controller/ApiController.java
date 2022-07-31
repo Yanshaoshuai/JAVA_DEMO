@@ -14,12 +14,14 @@ import java.util.Map;
 @RequestMapping("/api")
 public class ApiController {
     private final static Logger LOG = LoggerFactory.getLogger(ApiController.class);
+
     @GetMapping("/hello")
-    public Result<String> hello(){
+    public Result<String> hello() {
         return Result.ok("hello");
     }
+
     @GetMapping("/entity/hello")
-    public ResponseEntity<Map<String,Object>> responseEntityHello(){
-        return ResponseEntity.ok(Map.of("name","yan","age",20));
+    public ResponseEntity<Map<String, Object>> responseEntityHello() {
+        return ResponseEntity.ok(Map.of("name", "yan", "age", 20));
     }
 }
