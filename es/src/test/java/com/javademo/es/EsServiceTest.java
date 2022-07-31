@@ -15,7 +15,7 @@ import java.io.IOException;
 public class EsServiceTest {
     private final static Logger LOG = LoggerFactory.getLogger(EsServiceTest.class);
 
-    private  EsService esService;
+    private final EsService esService;
 
     @Autowired
     public EsServiceTest(EsService esService){

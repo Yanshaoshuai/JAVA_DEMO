@@ -35,7 +35,7 @@ public class PdfUtil {
      * generate header on page end
      */
     public static class HeaderEventHandler implements IEventHandler {
-        private IElement header;
+        private final IElement header;
 
         public HeaderEventHandler(IElement header) {
             this.header = header;

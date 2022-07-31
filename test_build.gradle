@@ -160,7 +160,7 @@ println "->" + tasks.findByPath("taskA").path
 
 class GreetingTask extends DefaultTask{
     @Input
-    String who="yan";
+    String who="yan"
 
     @TaskAction
     def hello(){
