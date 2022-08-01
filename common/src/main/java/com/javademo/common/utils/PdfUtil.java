@@ -10,7 +10,10 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
@@ -30,6 +33,9 @@ public class PdfUtil {
     public static void createPdf(String html, PdfDocument pdfDocument, ConverterProperties properties) {
         HtmlConverter.convertToPdf(html, pdfDocument, properties);
     }
+    public static Document createDoc(String html, PdfDocument pdfDocument, ConverterProperties properties){
+        return HtmlConverter.convertToDocument(html,pdfDocument,properties);
+    }
 
     /**
      * generate header on page end
@@ -45,8 +51,8 @@ public class PdfUtil {
         public void handleEvent(Event currentEvent) {
             PdfDocumentEvent documentEvent = (PdfDocumentEvent) currentEvent;
             PdfPage page = documentEvent.getPage();
-
             Rectangle pageSize = page.getPageSize();
+            PdfDocument document = documentEvent.getDocument();
             Canvas headerCanvas = new Canvas(page, new Rectangle(pageSize.getLeft(), pageSize.getTop() - 30, 100, 100));
             if (header instanceof Image) {
                 headerCanvas.add((Image) header);
