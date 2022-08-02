@@ -47,7 +47,6 @@ public class PdfTest {
         try {
             String html = FreeMarkerUtil.generateHtml("test.html", param);
             LOG.info("html:----------\n {} \n---------------", html);
-            String headerHtml = FreeMarkerUtil.generateHtml("header.html", null);
             PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream("test.pdf")));
             pdfDocument.setDefaultPageSize(PageSize.A4);
             pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler(new Image(ImageDataFactory.create(bytes))));
