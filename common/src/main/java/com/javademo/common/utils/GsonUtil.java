@@ -114,9 +114,4 @@ public class GsonUtil {
         return JsonParser.parseString(gson.toJson(object)).getAsJsonObject();
     }
 
-    public static void main(String[] args) {
-        JsonObject jsonObject = new JsonObject();
-        Map<String, String> stringStringMap = Map.of("11", "22");
-        System.out.println(beanToJsonObj(stringStringMap).get("11"));
-    }
 }
