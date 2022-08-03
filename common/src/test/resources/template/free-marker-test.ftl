@@ -6,7 +6,7 @@ ${age!"100"}
 <#if children??>
     <#list children>
         <#items as child>
-            ${child.name}-${child.age}
+            ${child?index}.${child.name}-${child.age}
         </#items>
     </#list>
 <#else>
@@ -15,7 +15,7 @@ ${age!"100"}
 <#if properties??>
     <#list properties>
         <#items as key,value>
-            ${key}-${value}
+            ${key?index}.${key}-${value}
         </#items>
     </#list>
 </#if>
