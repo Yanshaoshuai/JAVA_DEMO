@@ -23,6 +23,7 @@ import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.ResourceUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,6 +62,16 @@ public class PdfUtil {
     public static void createPdf(String html, OutputStream outputStream, ConverterProperties properties) {
         properties.setFontProvider(fontProvider);
         HtmlConverter.convertToPdf(html, outputStream, properties);
+    }
+
+    public static byte[] createPdf(String html, ConverterProperties properties) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            properties.setFontProvider(fontProvider);
+            HtmlConverter.convertToPdf(html, outputStream, properties);
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void createPdf(String html, PdfDocument pdfDocument, ConverterProperties properties) {
@@ -125,5 +136,34 @@ public class PdfUtil {
         pdfDocument.close();
         outputStream.close();
         inputStream.close();
+    }
+
+    /**
+     * add footer to exist pdf
+     *
+     * @param footer
+     * @param inputStream
+     * @throws IOException
+     */
+    public static byte[] addFooter(String footer, InputStream inputStream) throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            PdfDocument pdfDocument = new PdfDocument(new PdfReader(inputStream), new PdfWriter(outputStream));
+            int total = pdfDocument.getNumberOfPages();
+            for (int pageIndex = 1; pageIndex <= total; pageIndex++) {
+                PdfPage page = pdfDocument.getPage(pageIndex);
+                Rectangle pageSize = page.getPageSize();
+                String footerReal = FreeMarkerUtil.generateHtml(footer, Map.of("total", total, "pageIndex", pageIndex));
+                List<IElement> footerIElements = HtmlConverter.convertToElements(footerReal);
+                Canvas footerCanvas = new Canvas(page, new Rectangle(pageSize.getRight() - 40, pageSize.getBottom() + 40,
+                        40, 40));
+                footerIElements.forEach(iElement -> footerCanvas.add((IBlockElement) iElement));
+            }
+            pdfDocument.close();
+            outputStream.close();
+            inputStream.close();
+            return outputStream.toByteArray();
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

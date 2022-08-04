@@ -10,7 +10,6 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
@@ -18,10 +17,13 @@ import com.javademo.common.utils.FreeMarkerUtil;
 import com.javademo.common.utils.PdfUtil;
 import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,27 +34,50 @@ import java.util.Map;
 
 public class PdfTest {
     private final static Logger LOG = LoggerFactory.getLogger(PdfTest.class);
+    private static String html;
+    private static byte[] imageBytes;
 
-    @Test
-    public void testHeader() {
+
+    @BeforeAll
+    public static void init() {
         File file = FileUtils.getFile("E:\\File\\code\\JAVA_DEMO\\common\\src\\test\\resources\\template\\colossal.jpg");
-        byte[] bytes;
         try {
-            bytes = FileUtils.readFileToByteArray(file);
+            imageBytes = FileUtils.readFileToByteArray(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        String base64str = Base64.getEncoder().encodeToString(bytes);
+        String base64str = Base64.getEncoder().encodeToString(imageBytes);
         Map<String, Object> param = Map.of("title", "Colossal", "imgPath", "data:image/jpeg;base64," + base64str, "imgName", "Colossal");
         try {
-            String html = FreeMarkerUtil.generateHtml("test.html", param);
+            html = FreeMarkerUtil.generateHtml("test.html", param);
+        } catch (IOException | TemplateException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testPdf() {
+        LOG.info("html:----------\n {} \n---------------", html);
+        ConverterProperties props = new ConverterProperties();
+        byte[] pdfBytes = PdfUtil.createPdf(html, props);
+        try {
+            FileUtils.writeByteArrayToFile(new File("test.pdf"),pdfBytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testHeader() {
+
+        try {
             LOG.info("html:----------\n {} \n---------------", html);
             PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream("test.pdf")));
             pdfDocument.setDefaultPageSize(PageSize.A4);
-            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler(new Image(ImageDataFactory.create(bytes))));
+            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler(new Image(ImageDataFactory.create(imageBytes))));
             ConverterProperties props = new ConverterProperties();
             PdfUtil.createPdf(html, pdfDocument, props);
-        } catch (IOException | TemplateException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -65,35 +90,26 @@ public class PdfTest {
             throw new RuntimeException(e);
         }
     }
+
     @Test
-    public void testMargin(){
-        File file = FileUtils.getFile("E:\\File\\code\\JAVA_DEMO\\common\\src\\test\\resources\\template\\colossal.jpg");
-        byte[] bytes;
+    public void testMargin() {
         try {
-            bytes = FileUtils.readFileToByteArray(file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        String base64str = Base64.getEncoder().encodeToString(bytes);
-        Map<String, Object> param = Map.of("title", "Colossal", "imgPath", "data:image/jpeg;base64," + base64str, "imgName", "Colossal");
-        try {
-            String html = FreeMarkerUtil.generateHtml("test.html", param);
             LOG.info("html:----------\n {} \n---------------", html);
             PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new FileOutputStream("test.pdf")));
             pdfDocument.setDefaultPageSize(PageSize.A4);
-            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler(new Image(ImageDataFactory.create(bytes))));
-            Document document=new Document(pdfDocument);
-            document.setMargins(50,50,50,100);
+            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new PdfUtil.HeaderEventHandler(new Image(ImageDataFactory.create(imageBytes))));
+            Document document = new Document(pdfDocument);
+            document.setMargins(50, 50, 50, 100);
             List<IElement> elements = HtmlConverter.convertToElements(html);
             for (IElement element : elements) {
-                if(element instanceof IBlockElement){
-                    document.add((IBlockElement)element);
-                }else if (element instanceof HtmlPageBreak){
+                if (element instanceof IBlockElement) {
+                    document.add((IBlockElement) element);
+                } else if (element instanceof HtmlPageBreak) {
                     document.add((HtmlPageBreak) element);
                 }
             }
             document.close();
-        } catch (IOException | TemplateException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
