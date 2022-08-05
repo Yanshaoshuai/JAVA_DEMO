@@ -4,9 +4,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
@@ -19,12 +17,7 @@ public class FreeMarkerUtil {
 
     static {
         cfg.setDefaultEncoding("UTF-8");
-        try {
-            File dir = ResourceUtils.getFile("classpath:template/");
-            cfg.setDirectoryForTemplateLoading(dir);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        cfg.setClassForTemplateLoading(FreeMarkerUtil.class, "classpath:template/");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);
         cfg.setWrapUncheckedExceptions(true);
