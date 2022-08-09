@@ -21,5 +21,6 @@ public class RegexUtilTest {
         LOG.info("regexCheck(\"yanshaoshuai\",\"^(yan)(\\\\s)?(shaoshuai)+\",0) {}",RegexUtil.regexCheck("yanshaoshuai","^(yan)(\\s)?(shaoshuai)+",0));
         LOG.info("regexCheck(\"yanshaoshuai\",\"^(yan)(\\\\s)?(shaoshuai)+\",0) {}",RegexUtil.regexCheck("yanshaoshua","^(yan)(\\s)?(shaoshuai)+",0));
         LOG.info("regexCheck(\"there are yanshaoshuai\",\".*yan(\\\\s)?(shaoshuai)+\",0) {}",RegexUtil.regexCheck("there are yanshaoshuai",".*yan(\\s)?(shaoshuai)+",0));
+        LOG.info("regexCheck(\"there are yanshaoshuai\",\"[\\\\s\\\\S]*yan[\\\\s\\\\S]*shaoshuai\",0) {}",RegexUtil.regexCheck("there are yanshaoshuai","[\\s\\S]*yan[\\s\\S]*shaoshuai",0));
     }
 }

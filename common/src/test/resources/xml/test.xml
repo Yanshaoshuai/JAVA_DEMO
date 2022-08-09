@@ -1,0 +1,8 @@
+<goodsList class="com.javademo.pojo.Goods">
+    <goods id="123" name="watch" price="300">
+        小米手表
+    </goods>
+    <goods id="321" name="iphone" price="10000">
+        苹果手机
+    </goods>
+</goodsList>
