@@ -1,6 +1,4 @@
-<namespace com.es.mapper.TestMapper>
-
-
+<namespace class="com.javademo.es.mapper.TestMapper">
 <search method="getByName">
 {
   "size": 1,
