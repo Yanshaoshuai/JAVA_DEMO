@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.javademo.common.utils.FreeMarkerUtil;
 import com.javademo.es.pojo.Student;
+import freemarker.template.Configuration;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
@@ -13,27 +14,30 @@ import org.elasticsearch.client.Response;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 
 public class JdkInvocation implements InvocationHandler {
+    private  final Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
     private Object target;
-    private List<XmlMethod> xmlMethods;
-
+    private XmlReader xmlReader;
     JdkInvocation() {
         super();
     }
 
-    JdkInvocation(Object target, List<XmlMethod> xmlMethods) {
+    JdkInvocation(Object target, XmlReader xmlReader) {
         super();
         this.target = target;
-        this.xmlMethods = xmlMethods;
+        this.xmlReader=xmlReader;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        for (XmlMethod xmlMethod : xmlMethods) {
-            if (method.getName().equals(xmlMethod.getId())) {
-                return execute(xmlMethod, args);
+        for (Map.Entry<Class<?>,List<XmlMethod>> entry:xmlReader.getXmlMethods().entrySet()){
+            for (XmlMethod xmlMethod :entry.getValue()) {
+                if (method.getName().equals(xmlMethod.getId())) {
+                    return execute(xmlMethod, args);
+                }
             }
         }
         return null;

@@ -1,16 +1,12 @@
 package com.javademo.common.utils;
 
-import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
 
 
 public class FreeMarkerUtil {
