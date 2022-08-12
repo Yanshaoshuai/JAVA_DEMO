@@ -33,4 +33,16 @@ public class EsServiceTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void testGetByName() {
+        try {
+            Student student = esService.getByName("yanshaoshuai");
+            assert student != null;
+            Gson gson = new Gson();
+            LOG.info(gson.toJson(student));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -1,16 +1,20 @@
 package com.javademo.freemapper.core;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.javademo.common.utils.FreeMarkerUtil;
-import com.javademo.es.pojo.Student;
 import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -18,38 +22,40 @@ import java.util.Map;
 
 
 public class JdkInvocation implements InvocationHandler {
-    private  final Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+    private final Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
     private Object target;
     private XmlReader xmlReader;
+    private RestClient restClient;
+
     JdkInvocation() {
         super();
     }
 
-    JdkInvocation(Object target, XmlReader xmlReader) {
+    public JdkInvocation(XmlReader xmlReader, RestClient restClient) {
         super();
-        this.target = target;
-        this.xmlReader=xmlReader;
+        this.xmlReader = xmlReader;
+        this.restClient=restClient;
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) {
-        for (Map.Entry<Class<?>,List<XmlMethod>> entry:xmlReader.getXmlMethods().entrySet()){
-            for (XmlMethod xmlMethod :entry.getValue()) {
-                if (method.getName().equals(xmlMethod.getId())) {
-                    return execute(xmlMethod, args);
-                }
+    public Object invoke(Object proxy, Method method, Object[] args) throws TemplateException, IOException {
+        Map<String, List<XmlMethod>> xmlMethods = xmlReader.getXmlMethods();
+        List<XmlMethod> methodList = xmlMethods.get(method.getDeclaringClass().getName());
+        for (XmlMethod xmlMethod : methodList) {
+            if ((method.getDeclaringClass().getName()+"#"+method.getName()).equals(xmlMethod.getId())) {
+                return execute(xmlMethod, args, method.getReturnType());
             }
         }
         return null;
     }
 
-    private Object execute(XmlMethod xmlMethod, Object[] args) {
+    private Object execute(XmlMethod xmlMethod, Object[] args, Class<?> resultType) throws TemplateException, IOException {
         switch (xmlMethod.getType().toUpperCase()) {
             case "GET" -> {
-                return execGet(xmlMethod, args);
+                return execGet(xmlMethod, args, resultType);
             }
             case "POST" -> {
-                return execPost(xmlMethod, args);
+                return execPost(xmlMethod, args, resultType);
             }
             default -> {
                 return null;
@@ -57,14 +63,32 @@ public class JdkInvocation implements InvocationHandler {
         }
     }
 
-    private Object execPost(XmlMethod xmlMethod, Object[] args) {
+    private Object execPost(XmlMethod xmlMethod, Object[] args, Class<?> resultType) {
         return null;
     }
 
-    private Object execGet(XmlMethod xmlMethod, Object[] args) {
-        String content = xmlMethod.getContent();
-        //todo generate dsl from content and args
-        //use rest client to call es
+    private Object execGet(XmlMethod xmlMethod, Object[] args, Class<?> resultType) throws IOException, TemplateException {
+        Configuration fmCfg = xmlReader.getCfg();
+        Template template = fmCfg.getTemplate(xmlMethod.getId());
+        StringWriter writer = new StringWriter();
+        template.process(args[0], writer);
+        String resultDsl = writer.toString();
+        writer.close();
+        Request request = new Request("GET", "/"+xmlMethod.getIndex()+xmlMethod.getUrl());
+        request.setJsonEntity(resultDsl);
+        Response response = restClient.performRequest(request);
+        HttpEntity entity = response.getEntity();
+        String entityStr = EntityUtils.toString(entity);
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(entityStr, JsonObject.class);
+        JsonArray innerHits = jsonObject.get("hits").getAsJsonObject().get("hits").getAsJsonArray();
+        for (int i=0;i<innerHits.size();i++){
+            JsonObject sourceOuter = innerHits.get(i).getAsJsonObject();
+            if (sourceOuter.has("_source")) {
+                JsonElement source = sourceOuter.get("_source");
+                return gson.fromJson(source, resultType);
+            }
+        }
         return null;
     }
 }
