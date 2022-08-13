@@ -67,15 +67,18 @@ public class JdkInvocation implements InvocationHandler {
         return null;
     }
 
-    private Object execGet(XmlMethod xmlMethod, Object[] args, Class<?> resultType) throws IOException, TemplateException {
+    public String getResultDsl(String methodId,Object param) throws IOException, TemplateException {
         Configuration fmCfg = xmlReader.getCfg();
-        Template template = fmCfg.getTemplate(xmlMethod.getId());
+        Template template = fmCfg.getTemplate(methodId);
         StringWriter writer = new StringWriter();
-        template.process(args[0], writer);
+        template.process(param, writer);
         String resultDsl = writer.toString();
         writer.close();
+        return resultDsl;
+    }
+    private Object execGet(XmlMethod xmlMethod, Object[] args, Class<?> resultType) throws IOException, TemplateException {
         Request request = new Request("GET", "/"+xmlMethod.getIndex()+xmlMethod.getUrl());
-        request.setJsonEntity(resultDsl);
+        request.setJsonEntity(getResultDsl(xmlMethod.getId(),args[0]));
         Response response = restClient.performRequest(request);
         HttpEntity entity = response.getEntity();
         String entityStr = EntityUtils.toString(entity);
