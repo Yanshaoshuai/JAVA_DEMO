@@ -1,0 +1,28 @@
+{
+  "took" : 0,
+  "timed_out" : false,
+  "_shards" : {
+    "total" : 1,
+    "successful" : 1,
+    "skipped" : 0,
+    "failed" : 0
+  },
+  "hits" : {
+    "total" : {
+      "value" : 2,
+      "relation" : "eq"
+    },
+    "max_score" : 0.18232156,
+    "hits" : [
+      {
+        "_index" : "student",
+        "_id" : "1",
+        "_score" : 0.18232156,
+        "_source" : {
+          "name" : "yanshaoshuai",
+          "age" : 100
+        }
+      }
+    ]
+  }
+}

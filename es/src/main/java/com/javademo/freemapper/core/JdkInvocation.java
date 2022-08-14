@@ -1,9 +1,12 @@
 package com.javademo.freemapper.core;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.javademo.es.pojo.Student;
+import com.javademo.freemapper.entity.Hit;
+import com.javademo.freemapper.entity.SearchResult;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -82,16 +85,9 @@ public class JdkInvocation implements InvocationHandler {
         Response response = restClient.performRequest(request);
         HttpEntity entity = response.getEntity();
         String entityStr = EntityUtils.toString(entity);
-        Gson gson = new Gson();
-        JsonObject jsonObject = gson.fromJson(entityStr, JsonObject.class);
-        JsonArray innerHits = jsonObject.get("hits").getAsJsonObject().get("hits").getAsJsonArray();
-        for (int i=0;i<innerHits.size();i++){
-            JsonObject sourceOuter = innerHits.get(i).getAsJsonObject();
-            if (sourceOuter.has("_source")) {
-                JsonElement source = sourceOuter.get("_source");
-                return gson.fromJson(source, resultType);
-            }
-        }
-        return null;
+        ObjectMapper mapper = new ObjectMapper();
+        JavaType javaType = mapper.getTypeFactory().constructParametricType(SearchResult.class, resultType);
+        SearchResult<JavaType> searchResult=mapper.readValue(entityStr, javaType);
+        return searchResult.getHits().getHits().get(0).getSource();
     }
 }
