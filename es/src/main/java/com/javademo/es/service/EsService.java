@@ -42,10 +42,16 @@ public class EsService {
         }
         return student;
     }
-    public Student getByName(String name) throws IOException {
+    public Student getByIdWithFM(String id) throws IOException {
         XmlReader xmlReader = new XmlReader();
         xmlReader.init(List.of(Objects.requireNonNull(this.getClass().getResourceAsStream("/template/test.xml"))));
         TestMapper testMapper = (TestMapper)Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{TestMapper.class}, new JdkInvocation(xmlReader, restClient));
-        return testMapper.getByName(Map.of("name",name));
+        return testMapper.getById(id);
+    }
+    public Student getByNameWithFM(String name) throws IOException {
+        XmlReader xmlReader = new XmlReader();
+        xmlReader.init(List.of(Objects.requireNonNull(this.getClass().getResourceAsStream("/template/test.xml"))));
+        TestMapper testMapper = (TestMapper)Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{TestMapper.class}, new JdkInvocation(xmlReader, restClient));
+        return testMapper.getByName(name);
     }
 }

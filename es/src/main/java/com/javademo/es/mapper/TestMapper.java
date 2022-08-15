@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public interface TestMapper {
-    Student getByName(Map<String,Object> param) throws IOException;
+    Student getByName(String name) throws IOException;
+    Student getById(String id) throws IOException;
     Student getStudentByAge(int age);
 }

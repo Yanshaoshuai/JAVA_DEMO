@@ -56,6 +56,11 @@ public class XmlReader {
                     }else {
                         model.setIndex(index);
                     }
+                    if(StringUtils.isEmpty(url)){
+                        String paramUtl = element.attributeValue("paramUrl");
+                        model.setParamUrl(paramUtl);
+                        model.setParamUrlId(clazzName+"#"+id+"paramUrl");
+                    }
                     model.setUrl(url);
                     models.add(model);
                 }
@@ -78,6 +83,9 @@ public class XmlReader {
             List<XmlMethod> methods = entry.getValue();
             for (XmlMethod xmlMethod:methods) {
                 stringLoader.putTemplate(xmlMethod.getId(),xmlMethod.getContent());
+                if(StringUtils.isEmpty(xmlMethod.getUrl())){
+                    stringLoader.putTemplate(xmlMethod.getParamUrlId(),xmlMethod.getParamUrl());
+                }
             }
         }
         cfg.setTemplateLoader(stringLoader);

@@ -1,4 +1,4 @@
-package com.javademo.freemapper.entity;
+package com.javademo.freemapper.entity.search;
 
 import java.util.ArrayList;
 import java.util.List;

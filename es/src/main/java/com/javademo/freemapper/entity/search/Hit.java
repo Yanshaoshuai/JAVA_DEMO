@@ -1,4 +1,4 @@
-package com.javademo.freemapper.entity;
+package com.javademo.freemapper.entity.search;
 
 import javax.annotation.processing.Generated;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -7,6 +7,26 @@ public class XmlMethod {
 
     private String url;
 
+    private String paramUrl;
+
+    private String paramUrlId;
+
+    public String getParamUrlId() {
+        return paramUrlId;
+    }
+
+    public void setParamUrlId(String paramUrlId) {
+        this.paramUrlId = paramUrlId;
+    }
+
+    public String getParamUrl() {
+        return paramUrl;
+    }
+
+    public void setParamUrl(String paramUrl) {
+        this.paramUrl = paramUrl;
+    }
+
     public String getUrl() {
         return url;
     }

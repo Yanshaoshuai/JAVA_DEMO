@@ -35,9 +35,20 @@ public class EsServiceTest {
     }
 
     @Test
-    public void testGetByName() {
+    public void testGetByIdWithFM() {
         try {
-            Student student = esService.getByName("yanshaoshuai");
+            Student student = esService.getByIdWithFM("1");
+            assert student != null;
+            Gson gson = new Gson();
+            LOG.info(gson.toJson(student));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Test
+    public void testGetByNameWithFM() {
+        try {
+            Student student = esService.getByNameWithFM("yanshaoshuai");
             assert student != null;
             Gson gson = new Gson();
             LOG.info(gson.toJson(student));

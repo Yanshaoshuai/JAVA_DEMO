@@ -1,39 +1,42 @@
 <namespace class="com.javademo.es.mapper.TestMapper" index="student">
-<search method="getByName" resultType="com.javademo.es.pojo.Student" type="GET" url="/_search">
-{
-  "size": 1,
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "term": {
-            "name.keyword": {
-              "value": "${name}"
+  <search method="getByName" resultType="com.javademo.es.pojo.Student" type="GET" url="/_search">
+  {
+    "size": 1,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "term": {
+              "name.keyword": {
+                "value": "${name}"
+              }
             }
           }
-        }
-      ]
+        ]
+      }
     }
   }
-}
-</search>
-<search method="getByAge" resultType="com.javademo.es.pojo.Student" type="POST">
-{
-  "size": 1,
-  "query": {
-    "bool": {
-      "must": [
-        {
-          "term": {
-            "age": {
-              "value": ${age}
+  </search>
+  <search method="getByAge" resultType="com.javademo.es.pojo.Student" type="POST" url="/_search">
+  {
+    "size": 1,
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "term": {
+              "age": {
+                "value": ${age}
+              }
             }
           }
-        }
-      ]
+        ]
+      }
     }
   }
-}
-</search>
+  </search>
+  <search method="getById" resultType="com.javademo.es.pojo.Student" type="GET" paramUrl="/_doc/${id}">
+
+  </search>
 </namespace>
 
