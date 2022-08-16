@@ -48,7 +48,7 @@ public class EsService {
         TestMapper testMapper = (TestMapper)Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{TestMapper.class}, new JdkInvocation(xmlReader, restClient));
         return testMapper.getById(id);
     }
-    public Student getByNameWithFM(String name) throws IOException {
+    public List<Student> getByNameWithFM(String name) throws IOException {
         XmlReader xmlReader = new XmlReader();
         xmlReader.init(List.of(Objects.requireNonNull(this.getClass().getResourceAsStream("/template/test.xml"))));
         TestMapper testMapper = (TestMapper)Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{TestMapper.class}, new JdkInvocation(xmlReader, restClient));

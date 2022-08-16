@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.List;
 
 @SpringBootTest
 public class EsServiceTest {
@@ -48,10 +49,10 @@ public class EsServiceTest {
     @Test
     public void testGetByNameWithFM() {
         try {
-            Student student = esService.getByNameWithFM("yanshaoshuai");
-            assert student != null;
+            List<Student> students = esService.getByNameWithFM("yanshaoshuai");
+            assert students != null;
             Gson gson = new Gson();
-            LOG.info(gson.toJson(student));
+            LOG.info(gson.toJson(students));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

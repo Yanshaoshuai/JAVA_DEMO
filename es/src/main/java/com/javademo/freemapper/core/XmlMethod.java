@@ -11,6 +11,16 @@ public class XmlMethod {
 
     private String paramUrlId;
 
+    private String resultType;
+
+    public String getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
+    }
+
     public String getParamUrlId() {
         return paramUrlId;
     }
