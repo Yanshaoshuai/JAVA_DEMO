@@ -47,6 +47,7 @@ public class XmlReader {
                     String index = element.attributeValue("index");
                     String url = element.attributeValue("url");
                     String resultType = element.attributeValue("resultType");
+                    String resultParser = element.attributeValue("resultParser");
                     String content = element.getTextTrim();
                     XmlMethod model = new XmlMethod();
                     model.setId(clazzName+"#"+id);
@@ -64,6 +65,7 @@ public class XmlReader {
                     }
                     model.setUrl(url);
                     model.setResultType(resultType);
+                    model.setResultParser(resultParser);
                     models.add(model);
                 }
                 result.put(clazz.getName(), models);

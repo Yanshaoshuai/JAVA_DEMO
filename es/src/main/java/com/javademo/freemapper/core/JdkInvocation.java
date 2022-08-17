@@ -1,26 +1,23 @@
 package com.javademo.freemapper.core;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.javademo.freemapper.entity.byid.SearchByIdResult;
-import com.javademo.freemapper.entity.search.Hit;
-import com.javademo.freemapper.entity.search.SearchResult;
+import com.javademo.freemapper.core.parser.BaseParser;
+import com.javademo.freemapper.core.parser.CommonSearchParser;
+import com.javademo.freemapper.core.parser.SearchByIdParser;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +27,7 @@ public class JdkInvocation implements InvocationHandler {
     private Object target;
     private XmlReader xmlReader;
     private RestClient restClient;
+    private Map<String, BaseParser> parserMap;
 
     JdkInvocation() {
         super();
@@ -39,6 +37,9 @@ public class JdkInvocation implements InvocationHandler {
         super();
         this.xmlReader = xmlReader;
         this.restClient = restClient;
+        parserMap=new HashMap<>();
+        parserMap.put("CommonSearchParser",new CommonSearchParser());
+        parserMap.put("SearchByIdParser",new SearchByIdParser());
     }
 
     @Override
@@ -90,61 +91,20 @@ public class JdkInvocation implements InvocationHandler {
         writer.close();
         return resultDsl;
     }
-
+//todo ResultParser -- Upsert Delete  Aggregation Page
     private Object execGet(XmlMethod xmlMethod, Map<String, Object> params, Method method) throws IOException, TemplateException, ClassNotFoundException {
         Request request;
-        if(List.class.isAssignableFrom(method.getReturnType())){
-            //返回List<pojo>
+        if(StringUtils.isNotEmpty(xmlMethod.getUrl())){
             request = new Request("GET", "/" + xmlMethod.getIndex() + xmlMethod.getUrl());
-            request.setJsonEntity(getResultDsl(xmlMethod.getId(), params));
-            Response response = restClient.performRequest(request);
-            HttpEntity entity = response.getEntity();
-            String entityStr = EntityUtils.toString(entity);
-            ObjectMapper mapper = new ObjectMapper();
-            String resultType = xmlMethod.getResultType();
-            Class<?> innerType = Class.forName(resultType);
-            JavaType javaType = mapper.getTypeFactory().constructParametricType(SearchResult.class,innerType);
-            SearchResult<?> searchResult = mapper.readValue(entityStr, javaType);
-            List<? extends Hit<?>> hits = searchResult.getHits().getHits();
-            List result=new LinkedList();
-            for (Hit<?> hit:hits){
-                result.add(hit.getSource());
-            }
-            return result;
-        }else if (SearchResult.class.isAssignableFrom(method.getReturnType())){
-            //返回SearchResult
-            request = new Request("GET", "/" + xmlMethod.getIndex() + xmlMethod.getUrl());
-            request.setJsonEntity(getResultDsl(xmlMethod.getId(), params));
-            Response response = restClient.performRequest(request);
-            HttpEntity entity = response.getEntity();
-            String entityStr = EntityUtils.toString(entity);
-            ObjectMapper mapper = new ObjectMapper();
-            JavaType javaType = mapper.getTypeFactory().constructType(method.getGenericReturnType());
-            JavaType searchResult = mapper.readValue(entityStr, javaType);
-            return searchResult;
-        }else if (SearchByIdResult.class.isAssignableFrom(method.getReturnType())){
-            //返回 SearchByIdResult
-            request = new Request("GET", "/" + xmlMethod.getIndex() + xmlMethod.getUrl());
-            request.setJsonEntity(getResultDsl(xmlMethod.getId(), params));
-            Response response = restClient.performRequest(request);
-            HttpEntity entity = response.getEntity();
-            String entityStr = EntityUtils.toString(entity);
-            ObjectMapper mapper = new ObjectMapper();
-            JavaType javaType = mapper.getTypeFactory().constructType(method.getGenericReturnType());
-            JavaType searchByIdResult = mapper.readValue(entityStr, javaType);
-            return searchByIdResult;
         }else {
-            //返回pojo
-            request = new Request("GET", "/" + xmlMethod.getIndex() + getResultDsl(xmlMethod.getParamUrlId(), params));
-            request.setJsonEntity(getResultDsl(xmlMethod.getId(), params));
-            Response response = restClient.performRequest(request);
-            HttpEntity entity = response.getEntity();
-            String entityStr = EntityUtils.toString(entity);
-            ObjectMapper mapper = new ObjectMapper();
-            JavaType javaType = mapper.getTypeFactory().constructParametricType(SearchByIdResult.class,method.getReturnType());
-            SearchByIdResult<?> searchByIdResult = mapper.readValue(entityStr, javaType);
-            return searchByIdResult.getSource();
+            request = new Request("GET", "/" + xmlMethod.getIndex() + getResultDsl(xmlMethod.getParamUrlId(),params));
         }
+        request.setJsonEntity(getResultDsl(xmlMethod.getId(), params));
+        Response response = restClient.performRequest(request);
+        HttpEntity entity = response.getEntity();
+        String entityStr = EntityUtils.toString(entity);
+        BaseParser parser = parserMap.get(xmlMethod.getResultParser());
+        return parser.parse(method,xmlMethod,entityStr);
     }
 }
 

@@ -13,6 +13,16 @@ public class XmlMethod {
 
     private String resultType;
 
+    private String resultParser;
+
+    public String getResultParser() {
+        return resultParser;
+    }
+
+    public void setResultParser(String resultParser) {
+        this.resultParser = resultParser;
+    }
+
     public String getResultType() {
         return resultType;
     }

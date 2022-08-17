@@ -1,5 +1,5 @@
 <namespace class="com.javademo.es.mapper.TestMapper" index="student">
-  <search method="getByName" resultType="com.javademo.es.pojo.Student" type="GET" url="/_search">
+  <search method="getByName" resultType="com.javademo.es.pojo.Student" resultParser="CommonSearchParser" type="GET" url="/_search" >
   {
     "size": 1,
     "query": {
@@ -17,7 +17,7 @@
     }
   }
   </search>
-  <search method="getByAge" resultType="com.javademo.es.pojo.Student" type="POST" url="/_search">
+  <search method="getByAge" resultType="com.javademo.es.pojo.Student" resultParser="CommonSearchParser" type="POST" url="/_search">
   {
     "size": 1,
     "query": {
@@ -35,7 +35,7 @@
     }
   }
   </search>
-  <search method="getById" resultType="com.javademo.es.pojo.Student" type="GET" paramUrl="/_doc/${id}">
+  <search method="getById" resultType="com.javademo.es.pojo.Student" resultParser="SearchByIdParser" type="GET" paramUrl="/_doc/${id}">
 
   </search>
 </namespace>
