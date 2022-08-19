@@ -1,8 +1,7 @@
 package com.javademo.freemapper.core;
 
 import com.javademo.freemapper.core.parser.BaseParser;
-import com.javademo.freemapper.core.parser.CommonSearchParser;
-import com.javademo.freemapper.core.parser.SearchByIdParser;
+import com.javademo.freemapper.util.IdUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -21,25 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class JdkInvocation implements InvocationHandler {
-    private final Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-    private Object target;
     private XmlReader xmlReader;
     private RestClient restClient;
     private Map<String, BaseParser> parserMap;
 
-    JdkInvocation() {
-        super();
-    }
-
-    public JdkInvocation(XmlReader xmlReader, RestClient restClient) {
+    public JdkInvocation(XmlReader xmlReader, RestClient restClient,Map<String, BaseParser> parserMap) {
         super();
         this.xmlReader = xmlReader;
         this.restClient = restClient;
-        parserMap=new HashMap<>();
-        parserMap.put("CommonSearchParser",new CommonSearchParser());
-        parserMap.put("SearchByIdParser",new SearchByIdParser());
+        this.parserMap=parserMap;
     }
 
     @Override
@@ -47,7 +37,7 @@ public class JdkInvocation implements InvocationHandler {
         Map<String, List<XmlMethod>> xmlMethods = xmlReader.getXmlMethods();
         List<XmlMethod> methodList = xmlMethods.get(method.getDeclaringClass().getName());
         for (XmlMethod xmlMethod : methodList) {
-            if ((method.getDeclaringClass().getName() + "#" + method.getName()).equals(xmlMethod.getId())) {
+            if ((IdUtil.generateMethodId(method.getDeclaringClass().getName(),method.getName())).equals(xmlMethod.getId())) {
                 return execute(xmlMethod, buildParam(method, args), method);
             }
         }
@@ -64,24 +54,6 @@ public class JdkInvocation implements InvocationHandler {
         return params;
     }
 
-    private Object execute(XmlMethod xmlMethod, Map<String, Object> params, Method method) throws TemplateException, IOException, ClassNotFoundException {
-        switch (xmlMethod.getType().toUpperCase()) {
-            case "GET" -> {
-                return execGet(xmlMethod, params, method);
-            }
-            case "POST" -> {
-                return execPost(xmlMethod, params, method);
-            }
-            default -> {
-                return null;
-            }
-        }
-    }
-
-    private Object execPost(XmlMethod xmlMethod, Map<String, Object> params, Method method) {
-        return null;
-    }
-
     public String getResultDsl(String methodId, Object param) throws IOException, TemplateException {
         Configuration fmCfg = xmlReader.getCfg();
         Template template = fmCfg.getTemplate(methodId);
@@ -91,20 +63,21 @@ public class JdkInvocation implements InvocationHandler {
         writer.close();
         return resultDsl;
     }
-//todo ResultParser -- Upsert Delete  Aggregation Page
-    private Object execGet(XmlMethod xmlMethod, Map<String, Object> params, Method method) throws IOException, TemplateException, ClassNotFoundException {
+
+    //todo ResultParser -- Upsert Delete  Aggregation Page
+    private Object execute(XmlMethod xmlMethod, Map<String, Object> params, Method method) throws IOException, TemplateException, ClassNotFoundException {
         Request request;
-        if(StringUtils.isNotEmpty(xmlMethod.getUrl())){
-            request = new Request("GET", "/" + xmlMethod.getIndex() + xmlMethod.getUrl());
-        }else {
-            request = new Request("GET", "/" + xmlMethod.getIndex() + getResultDsl(xmlMethod.getParamUrlId(),params));
+        if (StringUtils.isNotEmpty(xmlMethod.getUrl())) {
+            request = new Request(xmlMethod.getType(), "/" + xmlMethod.getIndex() + xmlMethod.getUrl());
+        } else {
+            request = new Request(xmlMethod.getType(), "/" + xmlMethod.getIndex() + getResultDsl(xmlMethod.getParamUrlId(), params));
         }
         request.setJsonEntity(getResultDsl(xmlMethod.getId(), params));
         Response response = restClient.performRequest(request);
         HttpEntity entity = response.getEntity();
         String entityStr = EntityUtils.toString(entity);
         BaseParser parser = parserMap.get(xmlMethod.getResultParser());
-        return parser.parse(method,xmlMethod,entityStr);
+        return parser.parse(method, xmlMethod, entityStr);
     }
 }
 

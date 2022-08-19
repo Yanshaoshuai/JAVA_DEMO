@@ -1,5 +1,6 @@
 package com.javademo.freemapper.core;
 
+import com.javademo.freemapper.util.IdUtil;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -9,8 +10,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,13 +29,13 @@ public class XmlReader {
         return cfg;
     }
 
-    private Map<String, List<XmlMethod>> readMethods(List<InputStream> xmlInputs) {
+    private Map<String, List<XmlMethod>> readMethods(List<String> xmlFiles) {
         Map<String, List<XmlMethod>> result = new HashMap<>();
         SAXReader saxReader = new SAXReader();
-        for (InputStream xmlInput : xmlInputs) {
+        for (String xmlInput : xmlFiles) {
             List<XmlMethod> models = new LinkedList<>();
-            try (xmlInput) {
-                Document document = saxReader.read(xmlInput);
+            try{
+                Document document = saxReader.read(new ByteArrayInputStream(xmlInput.getBytes(StandardCharsets.UTF_8)));
                 Element rootElement = document.getRootElement();
                 String classAttribute = rootElement.attributeValue("class");
                 String globalIndex = rootElement.attributeValue("index");
@@ -50,7 +51,7 @@ public class XmlReader {
                     String resultParser = element.attributeValue("resultParser");
                     String content = element.getTextTrim();
                     XmlMethod model = new XmlMethod();
-                    model.setId(clazzName+"#"+id);
+                    model.setId(IdUtil.generateMethodId(clazzName,id));
                     model.setContent(content);
                     model.setType(type);
                     if(StringUtils.isEmpty(index)){
@@ -61,7 +62,7 @@ public class XmlReader {
                     if(StringUtils.isEmpty(url)){
                         String paramUtl = element.attributeValue("paramUrl");
                         model.setParamUrl(paramUtl);
-                        model.setParamUrlId(clazzName+"#"+id+"paramUrl");
+                        model.setParamUrlId(IdUtil.generateParamUrlId(clazzName,id,"paramUrl"));
                     }
                     model.setUrl(url);
                     model.setResultType(resultType);
@@ -69,15 +70,15 @@ public class XmlReader {
                     models.add(model);
                 }
                 result.put(clazz.getName(), models);
-            } catch (DocumentException | ClassNotFoundException | IOException e) {
+            } catch (DocumentException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
         return result;
     }
-    public  void init(List<InputStream> xmlInputs) {
+    public  void init(List<String> xmlFiles) {
         cfg= new Configuration(Configuration.VERSION_2_3_31);
-        xmlMethods=readMethods(xmlInputs);
+        xmlMethods=readMethods(xmlFiles);
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);

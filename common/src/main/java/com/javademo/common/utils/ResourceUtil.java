@@ -1,20 +1,38 @@
 package com.javademo.common.utils;
 
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
-@Component
 public class ResourceUtil {
-    private final ResourceLoader resourceLoader;
+    public static List<String> getResourceFiles(String path) throws IOException {
+        List<String> filenames = new ArrayList<>();
 
-    public ResourceUtil(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
+        try (
+                InputStream in = getResourceAsStream(path);
+                BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+            String resource;
+
+            while ((resource = br.readLine()) != null) {
+                filenames.add(resource);
+            }
+        }
+
+        return filenames;
     }
 
-    public  InputStream resourceLoader(String fileFullPath) throws IOException {
-        return resourceLoader.getResource(fileFullPath).getInputStream();
+    public static InputStream getResourceAsStream(String resource) {
+        final InputStream in
+                = getContextClassLoader().getResourceAsStream(resource);
+
+        return in == null ? ResourceUtil.class.getResourceAsStream(resource) : in;
+    }
+
+    public static ClassLoader getContextClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
     }
 }

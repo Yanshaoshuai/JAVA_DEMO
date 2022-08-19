@@ -3,8 +3,10 @@ package com.javademo.es.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.javademo.common.utils.ResourceUtil;
 import com.javademo.es.mapper.TestMapper;
 import com.javademo.es.pojo.Student;
+import com.javademo.freemapper.core.FreeMapper;
 import com.javademo.freemapper.core.JdkInvocation;
 import com.javademo.freemapper.core.XmlReader;
 import org.apache.http.HttpEntity;
@@ -43,15 +45,13 @@ public class EsService {
         return student;
     }
     public Student getByIdWithFM(String id) throws IOException {
-        XmlReader xmlReader = new XmlReader();
-        xmlReader.init(List.of(Objects.requireNonNull(this.getClass().getResourceAsStream("/template/test.xml"))));
-        TestMapper testMapper = (TestMapper)Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{TestMapper.class}, new JdkInvocation(xmlReader, restClient));
+        FreeMapper instance = FreeMapper.getInstance("/template/", restClient, "com.javademo.es.mapper");
+        TestMapper testMapper = (TestMapper)instance.getMapperInstanceMap().get("TestMapper");
         return testMapper.getById(id);
     }
     public List<Student> getByNameWithFM(String name) throws IOException {
-        XmlReader xmlReader = new XmlReader();
-        xmlReader.init(List.of(Objects.requireNonNull(this.getClass().getResourceAsStream("/template/test.xml"))));
-        TestMapper testMapper = (TestMapper)Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{TestMapper.class}, new JdkInvocation(xmlReader, restClient));
+        FreeMapper instance = FreeMapper.getInstance("/template/", restClient, "com.javademo.es.mapper");
+        TestMapper testMapper = (TestMapper)instance.getMapperInstanceMap().get("TestMapper");
         return testMapper.getByName(name);
     }
 }
