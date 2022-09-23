@@ -1,9 +1,11 @@
 package com.javademo.common.utils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,4 +84,22 @@ public class DateUtil {
         return zoneConvert(dateTimeStr, ZoneId.of("UTC"), targetZone, formatter);
     }
 
+    /**
+     * 获取当年第一天
+     */
+    public static String getYearStartDate(LocalDate date,DateTimeFormatter formatter){
+        return date.with(TemporalAdjusters.firstDayOfYear()).format(formatter);
+    }
+    /**
+     * 获取当月第一天
+     */
+    public static String getMonthStartDate(LocalDate date,DateTimeFormatter formatter){
+        return date.with(TemporalAdjusters.firstDayOfMonth()).format(formatter);
+    }
+    /**
+     * 获取当季第一天
+     */
+    public static String getQuarterStartDate(LocalDate date,DateTimeFormatter formatter){
+        return date.with(date.getMonth().firstMonthOfQuarter()).with(TemporalAdjusters.firstDayOfMonth()).format(formatter);
+    }
 }

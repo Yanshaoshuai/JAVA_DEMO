@@ -5,12 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class DateUtilTest {
+public class DateUtilTest implements Serializable {
     private final static Logger LOG = LoggerFactory.getLogger(DateUtilTest.class);
 
     @Test
@@ -81,5 +84,12 @@ public class DateUtilTest {
                 allTimeZones) {
             assert zoneId != null;
         }
+    }
+    @Test
+    public void testGetXXXStartDate(){
+        LocalDate now = LocalDate.now();
+        LOG.info("first day of year:{}",DateUtil.getYearStartDate(now, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LOG.info("first day of month:{}",DateUtil.getMonthStartDate(now,DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LOG.info("first day of quarter:{}",DateUtil.getQuarterStartDate(now,DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 }
