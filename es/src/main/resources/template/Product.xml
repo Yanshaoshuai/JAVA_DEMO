@@ -1,0 +1,13 @@
+<namespace class="com.javademo.es.mapper.ProductMapper" index="product">
+    <search method="getList" resultType="com.javademo.es.pojo.Product" resultParser="CommonSearchParser" type="GET" url="/_search" >
+        {
+        "size": ${size}
+        }
+    </search>
+    <search method="search" resultType="com.javademo.es.pojo.Product" resultParser="CommonSearchParser" type="GET" url="/_search" >
+        {
+        "size": ${size}
+        }
+    </search>
+</namespace>
+
