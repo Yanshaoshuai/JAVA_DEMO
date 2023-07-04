@@ -239,4 +239,8 @@ public class CryptoUtilTest {
             throw new RuntimeException(e);
         }
     }
+
+    public static void main(String[] args) {
+        System.out.println("MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAOUubn4qizJtpx+n".length());
+    }
 }

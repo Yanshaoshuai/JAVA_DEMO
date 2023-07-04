@@ -19,4 +19,5 @@ include 'job'
 include 'es'
 include 'redis'
 include 'mysql'
+include 'shiro'
 

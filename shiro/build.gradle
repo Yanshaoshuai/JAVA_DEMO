@@ -1,0 +1,11 @@
+dependencies {
+    implementation(project(":common"))
+    // https://mvnrepository.com/artifact/org.apache.shiro/shiro-core
+    implementation group: 'org.apache.shiro', name: 'shiro-core', version: '1.9.0'
+}
+bootJar {
+    enabled = true
+}
+jar {
+    enabled = true
+}
