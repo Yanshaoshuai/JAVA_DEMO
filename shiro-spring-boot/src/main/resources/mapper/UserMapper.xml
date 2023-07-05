@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javademo.shiro.springboot.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.javademo.shiro.springboot.entity.User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="pwd" property="pwd" jdbcType="INTEGER"/>
+        <result column="rid" property="rid" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <select id="getUserByName" resultType="com.javademo.shiro.springboot.entity.User">
+        select * from user where name =#{name}
+    </select>
+</mapper>

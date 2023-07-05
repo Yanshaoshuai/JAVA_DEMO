@@ -42,7 +42,7 @@ public class ShiroTest {
     }
     @Test
     public void testShiroEncrypt(){
-        String password= "123456";
+        String password= "123";
         Md5Hash md5Hash=new Md5Hash(password);
         LOG.info("md5 password string {}",md5Hash.toHex());
         //带盐的md5加密就是在字符串后面再拼接一段字符串然后再加密

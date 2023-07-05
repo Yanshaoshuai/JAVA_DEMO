@@ -20,4 +20,5 @@ include 'es'
 include 'redis'
 include 'mysql'
 include 'shiro'
+include 'shiro-spring-boot'
 
