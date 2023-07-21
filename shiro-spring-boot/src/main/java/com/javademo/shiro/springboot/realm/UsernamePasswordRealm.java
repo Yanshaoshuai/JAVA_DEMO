@@ -7,26 +7,40 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
-public class MyRealm extends AuthorizingRealm {
+public class UsernamePasswordRealm extends AuthorizingRealm {
+    private final static Logger LOG = LoggerFactory.getLogger(UsernamePasswordRealm.class);
 
-    private UserService userService;
+    private final UserService userService;
 
-    public MyRealm(UserService userService) {
+    public UsernamePasswordRealm(UserService userService) {
         this.userService = userService;
     }
 
     /**
-     * 自定义授权方法
+     * 获取授权信息
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
+        LOG.info("doGetAuthorizationInfo");
+        SimpleAuthorizationInfo authorizationInfo=new SimpleAuthorizationInfo();
+        String principal = principals.getPrimaryPrincipal().toString();
+        List<String> roleNames = userService.getRoleNames(principal);
+        List<String> permissionsInfo = userService.getPermissionsInfo(roleNames);
+        LOG.info("user {} roles {} permissions {}",principal,roleNames,permissionsInfo);
+        authorizationInfo.addRoles(roleNames);
+        authorizationInfo.addStringPermissions(permissionsInfo);
+        return authorizationInfo;
     }
 
     /**

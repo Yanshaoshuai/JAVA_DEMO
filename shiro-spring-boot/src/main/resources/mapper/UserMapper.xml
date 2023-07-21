@@ -13,4 +13,28 @@
     <select id="getUserByName" resultType="com.javademo.shiro.springboot.entity.User">
         select * from user where name =#{name}
     </select>
+    <select id="getRoleNamesByUserName" resultType="string">
+        SELECT `name`
+        FROM role
+        WHERE id IN
+              (SELECT rid
+               FROM role_user
+               WHERE uid = (SELECT id
+                            FROM `user`
+                            WHERE NAME = #{name}))
+    </select>
+    <select id="getPermissionsByRoleNames" resultType="string">
+        SELECT `info`
+        FROM permission
+        WHERE id IN
+        (SELECT pid
+        FROM permission_role
+        WHERE rid IN (SELECT id
+        FROM `role`
+        WHERE NAME IN
+        <foreach item="item" index="index" collection="roleNames" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ))
+    </select>
 </mapper>
