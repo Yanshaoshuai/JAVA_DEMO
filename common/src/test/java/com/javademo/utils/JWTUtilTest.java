@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.UUID;
 
 public class JWTUtilTest {
     private final static Logger LOG = LoggerFactory.getLogger(JWTUtilTest.class);
@@ -22,7 +23,7 @@ public class JWTUtilTest {
 
         PrivateKey privateKey = Asymmetric.loadPrivateKey(privateKeyBytes, SignatureAlgorithm.RS512.getFamilyName());
         PublicKey publicKey = Asymmetric.loadPublicKey(publicKeyBytes, SignatureAlgorithm.RS512.getFamilyName());
-        String token = JWTUtil.getToken("yan", 360000, SignatureAlgorithm.RS512, privateKey);
+        String token = JWTUtil.getToken("yan", 360000, SignatureAlgorithm.RS512, privateKey, UUID.randomUUID().toString());
         LOG.info("header is {}", JWTUtil.getHeader(token, publicKey));
         LOG.info("body is {}", JWTUtil.getBody(token, publicKey));
         LOG.info("signature is {}", JWTUtil.getSignature(token, publicKey));

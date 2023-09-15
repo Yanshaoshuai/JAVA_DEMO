@@ -197,7 +197,7 @@ public class CryptoUtilTest {
     @Test
     public void testSignature() {
         KeyPair keyPair = Asymmetric.generateKeypair(Asymmetric.ALG_RSA);
-        String signature = signature = Asymmetric.getBase64Signature("aaa", Charset.defaultCharset(), Asymmetric.ALG_SIGNATURE_RSA, keyPair.getPrivate(), true);
+        String signature = Asymmetric.getBase64Signature("aaa", Charset.defaultCharset(), Asymmetric.ALG_SIGNATURE_RSA, keyPair.getPrivate(), true);
 
         LOG.info("---signature is {}---", signature);
         LOG.info("---verify result is {}---", Asymmetric.verifyBase64Signature("aaa", Charset.defaultCharset(), Asymmetric.ALG_SIGNATURE_RSA, keyPair.getPublic(), signature, true));

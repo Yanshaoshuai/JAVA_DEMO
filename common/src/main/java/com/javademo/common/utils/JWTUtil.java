@@ -28,7 +28,7 @@ public class JWTUtil {
      * @param privateKey
      * @return
      */
-    public static String getToken(String username, long expireMills, SignatureAlgorithm algorithm, PrivateKey privateKey) {
+    public static String getToken(String username, long expireMills, SignatureAlgorithm algorithm, PrivateKey privateKey,String id) {
         Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
         return Jwts.builder()
@@ -36,6 +36,7 @@ public class JWTUtil {
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + expireMills))
                 .signWith(privateKey, algorithm)
+                .setId(id)
                 .compact();
     }
 
