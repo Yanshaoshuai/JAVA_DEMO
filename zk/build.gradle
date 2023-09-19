@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation group: 'org.apache.zookeeper', name: 'zookeeper', version: '3.4.6', ext: 'pom'
+    // https://mvnrepository.com/artifact/org.apache.curator/curator-recipes
+    implementation group: 'org.apache.curator', name: 'curator-recipes', version: '4.0.0'
+}
+
+test {
+    useJUnitPlatform()
+}
