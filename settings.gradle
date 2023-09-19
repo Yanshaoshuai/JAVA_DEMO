@@ -20,6 +20,7 @@ include 'es'
 include 'redis'
 include 'mysql'
 include 'shiro'
-include 'shiro-spring-boot'
 include 'base'
+include 'zk'
+include 'netty'
 
